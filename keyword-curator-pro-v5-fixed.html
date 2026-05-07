@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyword Curator Pro v5.0 — Latest Edition (Advanced Segmentation)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080c14;
+            --surface: #0e1624;
+            --surface2: #131d2e;
+            --surface3: #1a2540;
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(96,165,250,0.25);
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --accent: #3b82f6;
+            --accent2: #06b6d4;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --purple: #a855f7;
+            --pink: #ec4899;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Syne', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+        body::before {
+            content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            background-image: linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .wrap { position: relative; z-index: 1; max-width: 1500px; margin: 0 auto; padding: 2rem; }
+
+        /* HEADER */
+        header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .logo-block h1 { font-family: var(--sans); font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+        .logo-block h1 span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .logo-block p { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 0.35rem; letter-spacing: 0.08em; text-transform: uppercase; }
+        .header-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.25rem; }
+        .hbadge { font-family: var(--mono); font-size: 0.65rem; padding: 0.3rem 0.65rem; border-radius: 4px; letter-spacing: 0.06em; border: 1px solid; }
+        .hbadge-green { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.25); color: var(--green); }
+        .hbadge-blue { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.25); color: var(--accent); }
+        .hbadge-purple { background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.25); color: var(--purple); }
+
+        /* PANELS */
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.75rem; margin-bottom: 1.5rem; }
+        .panel-title { font-size: 0.7rem; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .panel-title::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+        /* UPLOAD */
+        .upload-zone { border: 1.5px dashed rgba(59,130,246,0.3); border-radius: 8px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.25s; background: rgba(59,130,246,0.03); }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+        .upload-zone .icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+        .upload-zone h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+        .upload-zone p { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+        #fileInput { display: none; }
+        .file-loaded { display: none; margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 6px; font-family: var(--mono); font-size: 0.8rem; color: var(--green); }
+        .file-loaded.show { display: block; }
+
+        /* COLUMN MAPPER */
+        .col-mapper { display: none; margin-top: 1rem; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 1.2rem; }
+        .col-mapper.show { display: block; }
+        .col-mapper-title { font-family: var(--mono); font-size: 0.72rem; color: var(--amber); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 0.9rem; }
+        .col-mapper-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .col-mapper select { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 0.8rem; padding: 0.45rem 0.7rem; outline: none; }
+
+        /* SETTINGS */
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+        .field label { display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .field input, .field select { width: 100%; padding: 0.6rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 0.85rem; transition: border-color 0.2s; outline: none; }
+        .field input:focus, .field select:focus { border-color: var(--accent); }
+        .field select option { background: var(--surface2); }
+
+        /* INTENT PILLS */
+        .intent-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .pill { padding: 0.35rem 0.8rem; border-radius: 20px; font-family: var(--mono); font-size: 0.72rem; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; user-select: none; }
+        .pill[data-intent="transactional"] { background: rgba(16,185,129,0.1); color: var(--green); border-color: rgba(16,185,129,0.2); }
+        .pill[data-intent="commercial"] { background: rgba(245,158,11,0.1); color: var(--amber); border-color: rgba(245,158,11,0.2); }
+        .pill[data-intent="informational"] { background: rgba(59,130,246,0.1); color: var(--accent); border-color: rgba(59,130,246,0.2); }
+        .pill[data-intent="navigational"] { background: rgba(168,85,247,0.1); color: var(--purple); border-color: rgba(168,85,247,0.2); }
+        .pill.active { box-shadow: 0 0 0 2px currentColor; }
+
+        /* BUTTONS */
+        .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .btn { padding: 0.7rem 1.5rem; border: none; border-radius: 7px; font-family: var(--sans); font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: all 0.25s; letter-spacing: 0.01em; }
+        .btn-run { background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #fff; flex: 1; min-width: 180px; }
+        .btn-run:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,0.35); }
+        .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--border-bright); color: var(--text); }
+        .btn-export { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+        .btn-export:hover { background: rgba(168,85,247,0.22); transform: translateY(-1px); }
+
+        /* RESULTS */
+        #results { display: none; }
+        #results.show { display: block; }
+
+        /* STATS BAR */
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+        .stat { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem 1rem; }
+        .stat-n { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; line-height: 1; margin-bottom: 0.3rem; }
+        .stat-l { font-size: 0.68rem; font-family: var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+        .stat.good .stat-n { color: var(--green); }
+        .stat.warn .stat-n { color: var(--red); }
+        .stat.info .stat-n { color: var(--accent); }
+        .stat.amber .stat-n { color: var(--amber); }
+        .stat.purple .stat-n { color: var(--purple); }
+        .stat.pink .stat-n { color: var(--pink); }
+        .stat.cyan .stat-n { color: var(--accent2); }
+
+        /* TABS */
+        .tabs { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+        .tab { padding: 0.4rem 0.9rem; border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted); transition: all 0.2s; }
+        .tab:hover, .tab.active { background: rgba(59,130,246,0.12); border-color: var(--accent); color: var(--accent); }
+        .tab.tab-red.active { background: rgba(239,68,68,0.12); border-color: var(--red); color: var(--red); }
+        .tab.tab-amber.active { background: rgba(245,158,11,0.12); border-color: var(--amber); color: var(--amber); }
+        .tab.tab-purple.active { background: rgba(168,85,247,0.12); border-color: var(--purple); color: var(--purple); }
+
+        /* TABLE */
+        .tbl-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--surface2); border-bottom: 1px solid var(--border); }
+        th { padding: 0.7rem 1rem; text-align: left; font-family: var(--mono); font-size: 0.67rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; white-space: nowrap; border-right: 1px solid var(--border); }
+        th:last-child { border-right: none; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:hover { background: rgba(59,130,246,0.05); }
+        tbody tr:last-child { border-bottom: none; }
+        td { padding: 0.65rem 1rem; font-size: 0.83rem; border-right: 1px solid var(--border); vertical-align: middle; }
+        td:last-child { border-right: none; }
+        .kw-cell { font-family: var(--mono); font-size: 0.8rem; color: #93c5fd; max-width: 200px; word-break: break-word; }
+        .title-cell { color: var(--text); max-width: 260px; font-size: 0.81rem; line-height: 1.4; }
+
+        /* BADGES */
+        .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.22rem 0.55rem; border-radius: 4px; font-family: var(--mono); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
+        .badge-tx { background: rgba(16,185,129,0.12); color: var(--green); }
+        .badge-cm { background: rgba(245,158,11,0.12); color: var(--amber); }
+        .badge-in { background: rgba(59,130,246,0.12); color: var(--accent); }
+        .badge-nv { background: rgba(168,85,247,0.12); color: var(--purple); }
+
+        /* CONTENT TYPE */
+        .ctype { display: inline-block; padding: 0.18rem 0.5rem; border-radius: 4px; font-family: var(--mono); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; }
+        .ctype-page { background: rgba(6,182,212,0.12); color: var(--accent2); }
+        .ctype-blog { background: rgba(168,85,247,0.12); color: var(--purple); }
+
+        /* SERP FEATURES */
+        .serp-tags { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+        .serp-tag { display: inline-block; padding: 0.15rem 0.4rem; border-radius: 3px; font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.03em; white-space: nowrap; }
+        .serp-fs { background: rgba(16,185,129,0.12); color: var(--green); }
+        .serp-paa { background: rgba(59,130,246,0.12); color: var(--accent); }
+        .serp-local { background: rgba(245,158,11,0.12); color: var(--amber); }
+        .serp-video { background: rgba(239,68,68,0.12); color: var(--red); }
+        .serp-img { background: rgba(236,72,153,0.12); color: var(--pink); }
+        .serp-shop { background: rgba(168,85,247,0.12); color: var(--purple); }
+
+        /* DIFFICULTY */
+        .diff-wrap { display: flex; align-items: center; gap: 0.4rem; min-width: 90px; }
+        .diff-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .diff-fill { height: 100%; border-radius: 2px; }
+        .diff-label { font-family: var(--mono); font-size: 0.65rem; min-width: 22px; text-align: right; }
+
+        /* SCORE */
+        .score-wrap { display: flex; align-items: center; gap: 0.4rem; min-width: 75px; }
+        .score-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .score-fill { height: 100%; border-radius: 2px; }
+        .score-num { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); min-width: 24px; text-align: right; }
+
+        /* CLUSTER SECTION */
+        .cluster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+        .cluster-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; }
+        .cluster-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .cluster-name { font-weight: 700; font-size: 0.88rem; color: #fff; }
+        .cluster-count { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+        .cluster-pill { font-family: var(--mono); font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 3px; margin-top: 0.3rem; display: inline-block; }
+        .cluster-kw { font-family: var(--mono); font-size: 0.75rem; color: #93c5fd; padding: 0.3rem 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .cluster-kw:last-child { border-bottom: none; }
+        .cluster-kw-primary { color: var(--green) !important; font-weight: 700; }
+        .cluster-vol { color: var(--muted); font-size: 0.68rem; }
+        .cannibal-warn { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; font-family: var(--mono); font-size: 0.72rem; color: var(--red); }
+
+        /* REJECTED TABLE */
+        .reject-reason { font-family: var(--mono); font-size: 0.68rem; color: var(--red); }
+        .reject-reason-label { display: inline-block; padding: 0.18rem 0.5rem; border-radius: 3px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); }
+
+        /* TIP BOX */
+        .tip-box { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.15); border-left: 3px solid var(--accent); border-radius: 6px; padding: 0.9rem 1.1rem; font-family: var(--mono); font-size: 0.75rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.25rem; }
+        .tip-box strong { color: var(--accent); }
+
+        /* EMPTY STATE */
+        .empty { padding: 3rem; text-align: center; color: var(--muted); font-family: var(--mono); font-size: 0.82rem; }
+
+        /* LOADING */
+        .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: rotate 0.7s linear infinite; vertical-align: middle; margin-right: 0.4rem; }
+        @keyframes rotate { to { transform: rotate(360deg); } }
+
+        /* EXPORT */
+        .export-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+        /* DUPE BADGE */
+        .dupe-badge { font-family: var(--mono); font-size: 0.62rem; padding: 0.12rem 0.4rem; border-radius: 3px; background: rgba(236,72,153,0.12); color: var(--pink); border: 1px solid rgba(236,72,153,0.2); }
+
+        /* PILLAR PAGE STRUCTURE */
+        .pillar-tip { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.18); border-left: 3px solid var(--purple); border-radius: 6px; padding: 0.9rem 1.1rem; font-family: var(--mono); font-size: 0.75rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.5rem; }
+        .pillar-tip strong { color: var(--purple); }
+        .pillar-section { margin-bottom: 2.5rem; }
+        .pillar-section-title { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .pillar-section-title span { background: var(--purple); color: #fff; border-radius: 3px; padding: 0.1rem 0.4rem; font-size: 0.6rem; }
+
+        /* PILLAR HUB CARD */
+        .pillar-hub { background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(59,130,246,0.08)); border: 1.5px solid rgba(168,85,247,0.35); border-radius: 12px; padding: 1.4rem 1.75rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.25rem; }
+        .pillar-hub-icon { font-size: 2rem; flex-shrink: 0; }
+        .pillar-hub-body { flex: 1; min-width: 0; }
+        .pillar-hub-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 0.35rem; }
+        .pillar-hub-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; word-break: break-word; }
+        .pillar-hub-meta { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+        .pillar-hub-stats { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .pillar-stat-pill { font-family: var(--mono); font-size: 0.65rem; padding: 0.2rem 0.55rem; border-radius: 4px; background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+
+        /* CONNECTOR LINE */
+        .pillar-connector { display: flex; justify-content: center; margin: 0.2rem 0; }
+        .pillar-connector-line { width: 2px; height: 28px; background: linear-gradient(to bottom, rgba(168,85,247,0.5), rgba(59,130,246,0.4)); border-radius: 2px; }
+
+        /* CLUSTER PAGES GRID */
+        .pillar-clusters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .pillar-cluster-card { background: var(--surface2); border: 1px solid rgba(59,130,246,0.2); border-radius: 10px; padding: 1.1rem; position: relative; overflow: hidden; transition: border-color 0.2s; }
+        .pillar-cluster-card:hover { border-color: rgba(59,130,246,0.45); }
+        .pillar-cluster-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+        .pc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem; gap: 0.5rem; }
+        .pc-label { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.2rem; }
+        .pc-title { font-size: 0.85rem; font-weight: 700; color: #fff; word-break: break-word; line-height: 1.3; }
+        .pc-vol { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+        .pc-intent-badge { font-family: var(--mono); font-size: 0.6rem; padding: 0.15rem 0.45rem; border-radius: 3px; margin-bottom: 0.65rem; display: inline-block; }
+        .pc-supporting { margin-top: 0.5rem; }
+        .pc-support-title { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+        .pc-kw-item { display: flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 0.72rem; color: #93c5fd; }
+        .pc-kw-item:last-child { border-bottom: none; }
+        .pc-kw-vol { margin-left: auto; color: var(--muted); font-size: 0.65rem; }
+        .pc-link-tag { font-family: var(--mono); font-size: 0.58rem; padding: 0.1rem 0.35rem; border-radius: 3px; background: rgba(6,182,212,0.1); color: var(--accent2); border: 1px solid rgba(6,182,212,0.2); flex-shrink: 0; }
+
+        /* PILLAR SUMMARY TABLE */
+        .pillar-summary-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.78rem; }
+        .pillar-summary-table th { padding: 0.6rem 0.9rem; text-align: left; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; border-bottom: 1px solid var(--border); background: var(--surface2); }
+        .pillar-summary-table td { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .pillar-summary-table tr:last-child td { border-bottom: none; }
+        .pillar-summary-table tr:hover td { background: rgba(59,130,246,0.04); }
+        .pst-pillar-kw { color: #c4b5fd; font-weight: 700; }
+        .pst-priority { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 3px; font-size: 0.62rem; font-weight: 700; }
+        .pst-p1 { background: rgba(16,185,129,0.12); color: var(--green); }
+        .pst-p2 { background: rgba(245,158,11,0.12); color: var(--amber); }
+        .pst-p3 { background: rgba(100,116,139,0.12); color: var(--muted); }
+
+        /* EXPORT PILLAR BTN */
+        .btn-pillar { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+        .btn-pillar:hover { background: rgba(168,85,247,0.22); transform: translateY(-1px); }
+
+        /* CLUSTER DASHBOARD (v4 redesign) */
+        .cd-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .cd-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .cd-filter { font-family: var(--mono); font-size: 0.68rem; padding: 0.35rem 0.75rem; border-radius: 5px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+        .cd-filter:hover, .cd-filter.active { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.08); }
+        .cd-filter.active-red { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.08); }
+        .cd-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+        .cd-table { width: 100%; border-collapse: collapse; }
+        .cd-head th { padding: 0.55rem 1rem; text-align: left; font-family: var(--mono); font-size: 0.63rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; border-bottom: 1px solid var(--border); background: var(--surface2); white-space: nowrap; }
+        .cd-row { border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+        .cd-row:hover { background: rgba(59,130,246,0.04); }
+        .cd-row.expanded { background: rgba(59,130,246,0.06); }
+        .cd-row td { padding: 0.75rem 1rem; vertical-align: middle; }
+        .cd-topic { font-size: 0.84rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem; }
+        .cd-primary-kw { font-family: var(--mono); font-size: 0.7rem; color: #93c5fd; margin-top: 0.2rem; }
+        .cd-count { font-family: var(--mono); font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 4px; background: rgba(59,130,246,0.1); color: var(--accent); border: 1px solid rgba(59,130,246,0.2); white-space: nowrap; }
+        .cd-vol { font-family: var(--mono); font-size: 0.78rem; color: var(--text); text-align: right; }
+        .cd-cannibal { font-family: var(--mono); font-size: 0.65rem; padding: 0.18rem 0.5rem; border-radius: 3px; background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); white-space: nowrap; }
+        .cd-ok { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); }
+        .cd-chevron { font-size: 0.75rem; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+        .cd-row.expanded .cd-chevron { transform: rotate(90deg); }
+
+        /* Expanded keyword list */
+        .cd-expand-row { display: none; }
+        .cd-expand-row.open { display: table-row; }
+        .cd-expand-row td { padding: 0; border-bottom: 2px solid var(--border-bright); }
+        .cd-kw-list { padding: 0.75rem 1rem 1rem 2.5rem; display: flex; flex-direction: column; gap: 0; background: rgba(59,130,246,0.03); }
+        .cd-kw-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.38rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: var(--mono); font-size: 0.75rem; }
+        .cd-kw-item:last-child { border-bottom: none; }
+        .cd-kw-star { color: var(--green); font-size: 0.7rem; width: 14px; flex-shrink: 0; }
+        .cd-kw-text { color: #93c5fd; flex: 1; min-width: 0; word-break: break-word; }
+        .cd-kw-text.primary { color: var(--green); font-weight: 700; }
+        .cd-kw-intent { font-size: 0.6rem; padding: 0.1rem 0.35rem; border-radius: 3px; flex-shrink: 0; }
+        .cd-kw-diff { font-size: 0.65rem; color: var(--muted); flex-shrink: 0; }
+        .cd-kw-vol { color: var(--muted); font-size: 0.7rem; min-width: 50px; text-align: right; flex-shrink: 0; }
+        .cd-qw { font-size: 0.62rem; color: var(--green); flex-shrink: 0; }
+
+        /* RESULT TABS NAVIGATION */
+        .rtabs-nav { display: flex; gap: 0.35rem; flex-wrap: wrap; padding: 0.65rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.25rem; }
+        .rtab { padding: 0.5rem 1rem; border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; cursor: pointer; border: 1px solid transparent; background: transparent; color: var(--muted); transition: all 0.2s; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
+        .rtab:hover { background: rgba(59,130,246,0.08); color: var(--text); border-color: var(--border); }
+        .rtab.active { background: rgba(59,130,246,0.15); color: #fff; border-color: rgba(59,130,246,0.5); }
+        .rtab.rtab-green.active { background: rgba(16,185,129,0.15); color: var(--green); border-color: rgba(16,185,129,0.4); }
+        .rtab.rtab-red.active { background: rgba(239,68,68,0.12); color: var(--red); border-color: rgba(239,68,68,0.35); }
+        .rtab.rtab-purple.active { background: rgba(168,85,247,0.15); color: var(--purple); border-color: rgba(168,85,247,0.4); }
+        .result-panel { display: none; }
+        .result-panel.active { display: block; }
+
+        /* PANEL HEADER ROW with inline download button */
+        .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+        .panel-header .panel-title { margin-bottom: 0; }
+        .btn-dl { padding: 0.4rem 0.9rem; border-radius: 6px; font-family: var(--mono); font-size: 0.68rem; cursor: pointer; border: 1px solid rgba(168,85,247,0.3); background: rgba(168,85,247,0.1); color: var(--purple); transition: all 0.2s; font-weight: 600; }
+        .btn-dl:hover { background: rgba(168,85,247,0.2); transform: translateY(-1px); }
+        .btn-dl-green { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); color: var(--green); }
+        .btn-dl-green:hover { background: rgba(16,185,129,0.2); }
+
+        /* EXPORT CARDS */
+        .export-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        .export-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.65rem; transition: border-color 0.2s; }
+        .export-card:hover { border-color: var(--border-bright); }
+        .export-card-icon { font-size: 1.5rem; }
+        .export-card-title { font-weight: 700; font-size: 0.88rem; color: #fff; }
+        .export-card-desc { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); line-height: 1.5; flex: 1; }
+        .export-card .btn-dl { width: 100%; text-align: center; padding: 0.55rem; font-size: 0.72rem; }
+
+        @media (max-width: 640px) {
+            .wrap { padding: 1rem; }
+            header { flex-direction: column; }
+            .logo-block h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <header>
+        <div class="logo-block">
+            <h1>Keyword<span>Curator</span> Pro</h1>
+            <p>SEO Strategist-Grade Filtering Engine v4.0 — Smarter Engine</p>
+        </div>
+        <div class="header-badges">
+            <span class="hbadge hbadge-green">✦ SMARTER ENGINE v4</span>
+            <span class="hbadge hbadge-blue">⚡ QUICK WINS DETECTOR</span>
+            <span class="hbadge hbadge-purple">🗂 ENTITY CLUSTERING</span>
+        </div>
+    </header>
+
+    <!-- UPLOAD -->
+    <div class="panel">
+        <div class="panel-title">01 — Import Keywords</div>
+        <div class="upload-zone" id="uploadZone">
+            <span class="icon">📂</span>
+            <h3>Drop your CSV or Excel file here</h3>
+            <p>Ahrefs · SEMrush · GSC · Ubersuggest · Any format · Auto column detection</p>
+            <label for="fileInput" style="display:inline-block;margin-top:1rem;padding:0.55rem 1.4rem;background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.4);border-radius:7px;color:#93c5fd;font-family:var(--mono);font-size:0.78rem;cursor:pointer;letter-spacing:0.04em">📁 Browse Files</label>
+        </div>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.tsv" style="display:none">
+        <div class="file-loaded" id="fileStatus"></div>
+
+        <!-- COLUMN MAPPER (auto-detect fallback) -->
+        <div class="col-mapper" id="colMapper">
+            <div class="col-mapper-title">⚠ Column Mapping — We detected your file. Confirm or adjust:</div>
+            <div class="col-mapper-row">
+                <div>
+                    <label style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);display:block;margin-bottom:0.3rem;">KEYWORD COLUMN</label>
+                    <select id="kwColSelect"></select>
+                </div>
+                <div>
+                    <label style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);display:block;margin-bottom:0.3rem;">VOLUME COLUMN</label>
+                    <select id="volColSelect"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel">
+        <div class="panel-title">02 — Filter Settings</div>
+        <div class="tip-box">
+            <strong>Pro filtering active:</strong> Keyword length is irrelevant — long-tail is welcome. Filters by intent clarity, natural phrasing, topic actionability, junk signals, near-duplicates, and cannibalization. SERP opportunities and difficulty are estimated from keyword patterns.
+        </div>
+        <div class="settings-grid">
+            <div class="field">
+                <label>Min Search Volume</label>
+                <input type="number" id="minVolume" value="10" min="0" placeholder="0 = no limit">
+            </div>
+            <div class="field">
+                <label>Quality Threshold (0–100)</label>
+                <input type="number" id="qualityThreshold" value="55" min="0" max="100">
+            </div>
+            <div class="field">
+                <label>Max Words Per Keyword</label>
+                <input type="number" id="maxWords" value="12" min="1" max="20">
+            </div>
+            <div class="field">
+                <label>Cannibal Similarity Threshold</label>
+                <select id="cannibalThreshold">
+                    <option value="0.75">Strict (75% similar)</option>
+                    <option value="0.65" selected>Balanced (65% similar)</option>
+                    <option value="0.55">Loose (55% similar)</option>
+                </select>
+            </div>
+        </div>
+        <div class="panel-title" style="margin-bottom:0.75rem;">Intent Focus (optional)</div>
+        <div class="intent-pills" id="intentPills">
+            <span class="pill" data-intent="transactional">💳 Transactional</span>
+            <span class="pill" data-intent="commercial">🔍 Commercial</span>
+            <span class="pill" data-intent="informational">📖 Informational</span>
+            <span class="pill" data-intent="navigational">🧭 Navigational</span>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-run" id="runBtn" onclick="run()">⚡ Analyze & Curate Keywords</button>
+            <button class="btn btn-ghost" onclick="resetAll()">Clear All</button>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results">
+
+        <!-- STATS BAR — always visible across all tabs -->
+        <div class="panel">
+            <div class="panel-title">03 — Curation Summary</div>
+            <div class="stats-bar" id="statsBar"></div>
+        </div>
+
+        <!-- RESULT TAB NAVIGATION -->
+        <div class="rtabs-nav" id="resultTabsNav">
+            <button class="rtab active"         onclick="showResultTab('clusters',this)">🗂 Clusters</button>
+            <button class="rtab rtab-purple"    onclick="showResultTab('pillar',this)">🏛 Pillar Plan</button>
+            <button class="rtab"                onclick="showResultTab('curated',this)">✅ Curated Keywords</button>
+            <button class="rtab rtab-red"       onclick="showResultTab('rejected',this)">❌ Rejected</button>
+            <button class="rtab rtab-green"     onclick="showResultTab('export',this)">📥 Export</button>
+        </div>
+
+        <!-- TAB: CLUSTERS -->
+        <div class="result-panel active" id="rtab-clusters">
+            <div class="panel" id="clusterPanel">
+                <div class="panel-header">
+                    <div class="panel-title">Topic Clusters Dashboard</div>
+                    <button class="btn-dl" onclick="exportClusters()">⬇ Download Clusters CSV</button>
+                </div>
+                <div class="cd-toolbar" style="margin-bottom:1.25rem">
+                    <div class="cd-filters">
+                        <button class="cd-filter active" onclick="filterClusters('all',this)">All Clusters</button>
+                        <button class="cd-filter" onclick="filterClusters('cannibal',this)" style="border-color:rgba(239,68,68,0.3);color:var(--red)">⚠ Cannibal Risk</button>
+                        <button class="cd-filter" onclick="filterClusters('large',this)">★ 4+ Keywords</button>
+                        <button class="cd-filter" onclick="filterClusters('quickwins',this)" style="border-color:rgba(16,185,129,0.3);color:var(--green)">⚡ Has Quick Wins</button>
+                    </div>
+                    <span class="cd-meta" id="clusterMeta"></span>
+                </div>
+                <div class="tbl-wrap">
+                    <table class="cd-table">
+                        <thead class="cd-head">
+                            <tr>
+                                <th style="width:36px"></th>
+                                <th>Cluster Topic</th>
+                                <th>Keywords</th>
+                                <th>Total Volume</th>
+                                <th>Intent</th>
+                                <th>Quick Wins</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clusterGrid"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: PILLAR PLAN -->
+        <div class="result-panel" id="rtab-pillar">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Pillar Page Structure</div>
+                    <button class="btn-dl" onclick="exportPillarCSV()">⬇ Download Pillar Plan CSV</button>
+                </div>
+                <div class="pillar-tip">
+                    <strong>Hub & Spoke:</strong> Each pillar page covers a broad topic and links to cluster content pages (sub-topics). Every cluster page links back to its pillar — this signals topical authority to Google.
+                </div>
+                <div id="pillarStructureEl"></div>
+                <div class="pillar-section" id="pillarTableSection" style="margin-top:2rem;">
+                    <div class="pillar-section-title">Content Production Roadmap <span>Priority order</span></div>
+                    <div class="tbl-wrap">
+                        <table class="pillar-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th><th>Track</th><th>Page / Article Title</th>
+                                    <th>Target Keyword</th><th>Type</th><th>Intent</th>
+                                    <th>Volume</th><th>Priority</th><th>Links To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pillarTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: CURATED KEYWORDS -->
+        <div class="result-panel" id="rtab-curated">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Curated Keywords</div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                        <button class="btn-dl btn-dl-green" onclick="exportCurrentTab()">⬇ Download This View</button>
+                        <button class="btn-dl" onclick="exportCSV()">⬇ Download All Curated</button>
+                    </div>
+                </div>
+                <div class="tabs" id="tabsEl"></div>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Keyword</th><th>Suggested Title</th>
+                                <th>Intent</th><th>Content</th><th>SERP Features</th>
+                                <th>KD~</th><th>Volume</th><th>Quality</th>
+                                <th title="Opportunity Score">Opp~</th>
+                                <th title="Recommended word count">Words</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: REJECTED -->
+        <div class="result-panel" id="rtab-rejected">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Rejected Keywords</div>
+                    <button class="btn-dl" onclick="exportRejectedCSV()">⬇ Download Rejected CSV</button>
+                </div>
+                <div class="tip-box" style="margin-bottom:1rem;">
+                    <strong>Transparency:</strong> Every rejected keyword shows exactly why it was cut. Review these — some may be worth saving if you lower the quality threshold.
+                </div>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Keyword</th><th>Rejection Reason</th>
+                                <th>Score</th><th>Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rejBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: EXPORT -->
+        <div class="result-panel" id="rtab-export">
+            <div class="panel">
+                <div class="panel-title">Export Results</div>
+                <div class="export-grid">
+                    <div class="export-card">
+                        <div class="export-card-icon">📊</div>
+                        <div class="export-card-title">Curated Keywords</div>
+                        <div class="export-card-desc">All passed keywords with intent, title, KD, Opp score, word count target, and quick win flag.</div>
+                        <button class="btn-dl" onclick="exportCSV()">⬇ Download CSV</button>
+                    </div>
+                    <div class="export-card">
+                        <div class="export-card-icon">⚡</div>
+                        <div class="export-card-title">Quick Wins Only</div>
+                        <div class="export-card-desc">Only the low-difficulty, real-volume keywords. Publish these first for fastest SEO results.</div>
+                        <button class="btn-dl btn-dl-green" onclick="exportQuickWinsCSV()">⬇ Download CSV</button>
+                    </div>
+                    <div class="export-card">
+                        <div class="export-card-icon">🗂</div>
+                        <div class="export-card-title">Topic Clusters</div>
+                        <div class="export-card-desc">All clusters with primary/secondary keywords, intent, volume, and cannibalization flags.</div>
+                        <button class="btn-dl" onclick="exportClusters()">⬇ Download CSV</button>
+                    </div>
+                    <div class="export-card">
+                        <div class="export-card-icon">🏛</div>
+                        <div class="export-card-title">Pillar Plan</div>
+                        <div class="export-card-desc">Content production roadmap in priority order — pillar pages, service pages, and blog posts.</div>
+                        <button class="btn-dl" onclick="exportPillarCSV()">⬇ Download CSV</button>
+                    </div>
+                    <div class="export-card">
+                        <div class="export-card-icon">❌</div>
+                        <div class="export-card-title">Rejected Keywords</div>
+                        <div class="export-card-desc">Every rejected keyword with its exact rejection reason and quality score.</div>
+                        <button class="btn-dl" onclick="exportRejectedCSV()">⬇ Download CSV</button>
+                    </div>
+                    <div class="export-card">
+                        <div class="export-card-icon">📥</div>
+                        <div class="export-card-title">Full JSON Report</div>
+                        <div class="export-card-desc">Complete structured data — all curated keywords, clusters, and rejected list in one file.</div>
+                        <button class="btn-dl" onclick="exportJSON()">⬇ Download JSON</button>
+                    </div>
+                    <div class="export-card">
+                        <div class="export-card-icon">📄</div>
+                        <div class="export-card-title">Text Report</div>
+                        <div class="export-card-desc">Human-readable summary with quick wins, clusters, and keyword details grouped by intent.</div>
+                        <button class="btn-dl" onclick="exportText()">⬇ Download TXT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end #results -->
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js';document.head.appendChild(s);"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+// ── INIT ──────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let allKw = [];
+let curated = [];
+let rejected = [];
+let clusters = [];
+let rawHeaders = [];
+let rawRows = [];
+let activeTab = 'all';
+let selectedIntents = new Set();
+
+// ═══════════════════════════════════════════════════════════════
+// INTENT PILLS
+// ═══════════════════════════════════════════════════════════════
+document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+        const intent = pill.dataset.intent;
+        if (selectedIntents.has(intent)) { selectedIntents.delete(intent); pill.classList.remove('active'); }
+        else { selectedIntents.add(intent); pill.classList.add('active'); }
+    });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// UPLOAD & FILE PARSING
+// ═══════════════════════════════════════════════════════════════
+const zone = document.getElementById('uploadZone');
+const fi = document.getElementById('fileInput');
+zone.addEventListener('click', () => fi.click());
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+fi.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+
+function loadFile(f) {
+    const ext = f.name.split('.').pop().toLowerCase();
+    const status = document.getElementById('fileStatus');
+    status.innerHTML = '⏳ Loading file...'; status.classList.add('show');
+    if (ext === 'csv') {
+        const r = new FileReader();
+        r.onerror = () => { status.innerHTML = '❌ Could not read file. Try saving as CSV UTF-8.'; };
+        r.onload = e => parseCSVRaw(e.target.result, f.name);
+        r.readAsText(f);
+    } else if (['xlsx','xls'].includes(ext)) {
+        if (typeof XLSX === 'undefined') {
+            status.innerHTML = '❌ Excel library still loading — wait 2 seconds and try again, or save your file as CSV.';
+            return;
+        }
+        const r = new FileReader();
+        r.onerror = () => { status.innerHTML = '❌ Could not read file.'; };
+        r.onload = e => parseXLSXRaw(e.target.result, f.name);
+        r.readAsArrayBuffer(f);
+    } else {
+        status.innerHTML = '❌ Unsupported format. Please upload a .csv, .xlsx, or .xls file.';
+        status.classList.add('show');
+    }
+}
+
+function parseCSVRaw(text, name) {
+    try {
+        const lines = text.trim().split('\n').filter(l => l.trim());
+        if (!lines.length) { alert('File appears empty.'); return; }
+        const sep = detectSep(lines[0]);
+        rawHeaders = lines[0].split(sep).map(h => h.trim().replace(/^["'"]|["'"]$/g, ''));
+        rawRows = lines.slice(1).map(l => l.split(sep).map(c => c.trim().replace(/^["'"]|["'"]$/g, '')));
+        setupColumnMapper(name, rawHeaders, rawRows.length);
+    } catch(e) { alert('CSV parse error: ' + e.message); }
+}
+
+function parseXLSXRaw(buf, name) {
+    try {
+        const wb = XLSX.read(buf, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        rawHeaders = (data[0] || []).map(h => String(h || '').trim());
+        rawRows = data.slice(1).filter(r => r[0]).map(r => r.map(c => String(c || '').trim()));
+        setupColumnMapper(name, rawHeaders, rawRows.length);
+    } catch(e) { alert('Excel read error: ' + e.message + '\n\nTry saving the file as CSV instead.'); }
+}
+
+function detectSep(line) {
+    if ((line.match(/\|/g) || []).length > 1) return '|';
+    if ((line.match(/\t/g) || []).length > 0) return '\t';
+    return ',';
+}
+
+// ── AUTO COLUMN DETECTION ──────────────────────────────────────
+function autoDetectColumns(headers) {
+    const kwPatterns = /keyword|query|term|phrase|search term|kw/i;
+    const volPatterns = /volume|vol|search vol|monthly|searches|avg/i;
+    let kwIdx = headers.findIndex(h => kwPatterns.test(h));
+    let volIdx = headers.findIndex(h => volPatterns.test(h));
+    // Fallback: first text-looking col = keyword, first numeric = volume
+    if (kwIdx === -1) kwIdx = 0;
+    if (volIdx === -1) {
+        // Try to find a column with numeric data
+        volIdx = headers.findIndex((h, i) => i !== kwIdx && /vol|search|monthly|avg|traffic/i.test(h));
+        if (volIdx === -1) volIdx = kwIdx === 0 ? 1 : 0;
+    }
+    return { kwIdx, volIdx };
+}
+
+function setupColumnMapper(name, headers, count) {
+    const { kwIdx, volIdx } = autoDetectColumns(headers);
+    const kwSel = document.getElementById('kwColSelect');
+    const volSel = document.getElementById('volColSelect');
+    kwSel.innerHTML = headers.map((h, i) => `<option value="${i}" ${i === kwIdx ? 'selected' : ''}>${h || 'Column ' + (i+1)}</option>`).join('');
+    volSel.innerHTML = `<option value="-1">— None —</option>` + headers.map((h, i) => `<option value="${i}" ${i === volIdx ? 'selected' : ''}>${h || 'Column ' + (i+1)}</option>`).join('');
+    document.getElementById('colMapper').classList.add('show');
+    const status = document.getElementById('fileStatus');
+    status.innerHTML = `✅ <strong>${name}</strong> — ${count.toLocaleString()} rows · Auto-detected: keyword = "<strong>${headers[kwIdx] || 'Col ' + (kwIdx+1)}</strong>", volume = "<strong>${headers[volIdx] || 'none'}</strong>"`;
+    status.classList.add('show');
+}
+
+function buildKwArray() {
+    const kwIdx = parseInt(document.getElementById('kwColSelect').value);
+    const volIdx = parseInt(document.getElementById('volColSelect').value);
+    allKw = [];
+    rawRows.forEach(row => {
+        const kw = (row[kwIdx] || '').trim();
+        if (!kw) return;
+        const vol = volIdx >= 0 ? (parseInt(String(row[volIdx]).replace(/[^0-9]/g, '')) || 0) : 0;
+        allKw.push({ keyword: kw, volume: vol });
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE 7: NEAR-DUPLICATE REMOVAL
+// ═══════════════════════════════════════════════════════════════
+// ── NEAR-DUPLICATE NORMALISER ─────────────────────────────────
+// Word-level normalisation: strips plurals, gerunds, past tense
+// WITHOUT destroying words like "analysis"→"analysi" or "focus"→"focu"
+function normalize(kw) {
+    return kw.toLowerCase().trim()
+        .replace(/[^a-z0-9\s]/g, '')
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(w => {
+            // Strip trailing 's' only if word won't become too short
+            // and doesn't end in 'ss', 'is', 'us', 'ous' (focus, analysis, bonus)
+            if (w.length > 4 && w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('is') && !w.endsWith('us') && !w.endsWith('ous')) w = w.slice(0, -1);
+            // Strip 'ing' only from longer words (running→run, generating→generat)
+            if (w.length > 5 && w.endsWith('ing')) w = w.slice(0, -3);
+            // Strip 'ed' only from longer words
+            if (w.length > 4 && w.endsWith('ed') && !w.endsWith('eed') && !w.endsWith('ied')) w = w.slice(0, -2);
+            return w;
+        })
+        .join(' ');
+}
+
+function deduplicateKeywords(kwList) {
+    const seen = new Map(); // normalized → original best (highest volume)
+    const dupeOf = new Map(); // index → index of canonical
+    kwList.forEach((item, i) => {
+        const norm = normalize(item.keyword);
+        if (seen.has(norm)) {
+            const existingIdx = seen.get(norm);
+            if (item.volume > kwList[existingIdx].volume) {
+                dupeOf.set(existingIdx, i);
+                seen.set(norm, i);
+            } else {
+                dupeOf.set(i, existingIdx);
+            }
+        } else {
+            seen.set(norm, i);
+        }
+    });
+    return { unique: kwList.filter((_, i) => !dupeOf.has(i)), dupeIndices: dupeOf };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTENT CLASSIFICATION
+// ═══════════════════════════════════════════════════════════════
+// SIGNALS kept for scoreKeyword compatibility
+const SIGNALS = {
+    transactional: ['buy','order','purchase','shop','price','pricing','cost','cheap','deal','discount','coupon','near me','delivery','hire','book','booking','quote','get quote','free trial','subscribe','sign up','install','apply','rent','affordable','best price','low cost','offer','checkout','order online','buy online'],
+    informational: ['how to','how do','how does','what is','what are','why is','why does','when to','where to','guide','tutorial','tips','learn','understand','explain','difference between','meaning of','definition','examples','types of','list of','overview','introduction','beginners','step by step','checklist','template','ideas','inspiration','benefits','advantages','disadvantages','problems','mistakes','common','complete','ultimate','everything about','explained'],
+    commercial: ['best','top','review','reviews','comparison','compare','vs ','versus','alternative','alternatives','recommend','recommended','which','pros cons','worth it','is it good','should i','ranking','rated','2024','2025','2026'],
+    navigational: ['login','sign in','website','official','contact','support','customer service','helpdesk','app','portal','dashboard','account','homepage']
+};
+
+// ── WEIGHTED INTENT CLASSIFIER (v4 — no first-match bias) ─────
+function classifyIntent(kw) {
+    const k = kw.toLowerCase().trim();
+    const words = k.split(/\s+/).filter(Boolean);
+    const scores = { transactional: 0, informational: 0, commercial: 0, navigational: 0 };
+
+    // NAVIGATIONAL — highest priority override
+    ['login','sign in','sign-in','dashboard','portal','helpdesk','contact us','my account','homepage','official site'].forEach(s => { if (k.includes(s)) scores.navigational += 55; });
+
+    // TRANSACTIONAL signals
+    ['buy ','order ','purchase ','hire ','book now','get quote','free trial','sign up for','subscribe to','checkout','apply now','rent ','book a ','get started','download now','install '].forEach(s => { if (k.includes(s)) scores.transactional += 30; });
+    ['pricing','price','cost','cheap','affordable','discount','coupon','deal','near me','delivery','for sale','quote','free demo','book'].forEach(s => { if (k.includes(s)) scores.transactional += 15; });
+    if (/\bnear me\b/.test(k)) scores.transactional += 22;
+
+    // INFORMATIONAL signals
+    const infoQ = ['how to ','how do ','how does ','what is ','what are ','why is ','why does ','why are ','when to ','where to ','who is ','who are ','can i ','should i '];
+    infoQ.forEach(s => { if (k.startsWith(s) || k.includes(s)) scores.informational += 35; });
+    ['guide','tutorial','step by step','step-by-step','checklist','template','explained','meaning of','definition','difference between'].forEach(s => { if (k.includes(s)) scores.informational += 22; });
+    ['tips','ideas','inspiration','learn ','understand','benefits','advantages','disadvantages','problems','mistakes','types of','list of','overview','introduction','beginners','complete guide','everything about'].forEach(s => { if (k.includes(s)) scores.informational += 12; });
+
+    // COMMERCIAL signals
+    [' vs ',' versus ','alternative','alternatives','compare','comparison','review','reviews','ranking','ranked'].forEach(s => { if (k.includes(s)) scores.commercial += 26; });
+    ['best ','top ','worth it','is it good','pros and cons','pros cons','recommended','2024','2025','2026','rated','rating','which is best'].forEach(s => { if (k.includes(s)) scores.commercial += 15; });
+
+    // ── Disambiguation overrides ──────────────────────────────
+    // "vs" = comparison (commercial), NOT transactional
+    if (/ vs | versus /.test(k)) { scores.commercial += 22; scores.transactional = Math.max(0, scores.transactional - 30); }
+    // "how to buy/get/hire X" = transactional despite how-to prefix
+    if (/how to (buy|get|order|hire|find|book)\b/.test(k)) { scores.transactional += 28; scores.informational = Math.max(0, scores.informational - 25); }
+    // "best X for Y" = commercial list, not transactional
+    if (/^best .+ for /.test(k)) { scores.commercial += 20; scores.transactional = Math.max(0, scores.transactional - 10); }
+    // "X review" without "how" prefix = commercial
+    if (/\breview(s)?\b/.test(k) && !k.startsWith('how')) { scores.commercial += 25; }
+    // "worth it" = commercial (evaluation)
+    if (/\bworth it\b/.test(k)) { scores.commercial += 28; scores.transactional = Math.max(0, scores.transactional - 15); }
+    // "is X worth/good" = commercial
+    if (/^is .+(worth|good|better|best)\b/.test(k)) { scores.commercial += 20; }
+    // Question starting with "is/are" without buy intent = informational
+    if (/^(is|are) /.test(k) && scores.transactional < 20) scores.informational += 12;
+
+    // Length bias: very short = lean commercial; very long = lean informational
+    if (words.length <= 2) scores.commercial += 8;
+    else if (words.length >= 6) scores.informational += 10;
+
+    return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE 2: SERP FEATURE PREDICTION
+// ═══════════════════════════════════════════════════════════════
+function predictSerpFeatures(kw, intent) {
+    const k = kw.toLowerCase();
+    const features = [];
+    // Featured Snippet: question-format or how-to
+    if (/^(how|what|why|when|where|which|who|is|are|can|does|do|should)\b/.test(k) || k.includes('how to') || k.includes('what is')) features.push('FS');
+    // PAA: questions + informational
+    if ((/^(how|what|why|when|where|which|who)\b/.test(k)) || intent === 'informational') features.push('PAA');
+    // Local pack: near me, local, city names pattern
+    if (k.includes('near me') || k.includes('local') || k.includes('in ') || k.includes('near')) features.push('LOCAL');
+    // Video: tutorial, how to, learn
+    if (k.includes('tutorial') || k.includes('how to') || k.includes('learn') || k.includes('step by step') || k.includes('course')) features.push('VIDEO');
+    // Image pack: types, examples, ideas, inspiration, design, style
+    if (k.includes('examples') || k.includes('ideas') || k.includes('inspiration') || k.includes('design') || k.includes('template') || k.includes('style')) features.push('IMG');
+    // Shopping: buy, price, shop, product
+    if (intent === 'transactional' && (k.includes('buy') || k.includes('price') || k.includes('shop') || k.includes('cheap'))) features.push('SHOP');
+    return features;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE 3: KEYWORD DIFFICULTY ESTIMATE
+// ═══════════════════════════════════════════════════════════════
+// ── SMARTER DIFFICULTY ESTIMATOR (v4) ────────────────────────
+function estimateDifficulty(kw, volume) {
+    const k = kw.toLowerCase();
+    const words = k.split(/\s+/).filter(Boolean);
+    let d = 48; // base
+
+    // Word count: long-tail = lower competition
+    if (words.length === 1) d += 32;
+    else if (words.length === 2) d += 18;
+    else if (words.length === 3) d += 6;
+    else if (words.length === 4) d -= 5;
+    else if (words.length === 5) d -= 12;
+    else if (words.length >= 6) d -= 18;
+
+    // Volume: higher search volume usually = more competitive
+    if (volume > 100000) d += 24;
+    else if (volume > 50000) d += 18;
+    else if (volume > 10000) d += 12;
+    else if (volume > 1000) d += 5;
+    else if (volume <= 100 && volume > 0) d -= 10;
+    else if (volume === 0) d -= 5; // no volume data → assume niche
+
+    // Brand keywords = high difficulty
+    const BRANDS = ['google','facebook','amazon','apple','microsoft','youtube','instagram','twitter','linkedin','shopify','hubspot','salesforce','mailchimp','slack','stripe','notion','ahrefs','semrush'];
+    if (BRANDS.some(b => k.includes(b))) d += 22;
+
+    // Question format = often less competed (exact-match search intent page harder to land)
+    if (/^(how|what|why|when|where|which|who)\b/.test(k)) d -= 9;
+
+    // Comparison keywords = highly competitive (both sides compete)
+    if (/ vs | versus /.test(k)) d += 8;
+
+    // "Near me" = local competition, usually lower than national
+    if (/\bnear me\b/.test(k)) d -= 8;
+
+    // Highly specific long-tail with 3+ modifiers = very low competition
+    const specificModifiers = ['for small business','for beginners','for freelancer','for startup','without ','step by step','for enterprise','in 2026','in 2025','case study','real estate','b2b','saas'];
+    if (specificModifiers.filter(m => k.includes(m)).length >= 2) d -= 12;
+    else if (specificModifiers.some(m => k.includes(m))) d -= 6;
+
+    // Generic single-word competitors: very high competition
+    if (words.length === 1 && volume > 5000) d = Math.max(d, 75);
+
+    // Very informational long-tail = typically easier
+    if (words.length >= 5 && /\b(how to|what is|guide|tutorial|tips|checklist)\b/.test(k)) d -= 10;
+
+    // Branded + comparison = elevated
+    if (BRANDS.some(b => k.includes(b)) && / vs /.test(k)) d += 10;
+
+    // Pricing keywords: moderate competition (buyers are specific)
+    if (/\b(pricing|cost of|how much)\b/.test(k)) d -= 6;
+
+    return Math.max(1, Math.min(99, Math.round(d)));
+}
+
+function diffLabel(d) {
+    if (d >= 80) return { label: 'VH', color: '#ef4444' };
+    if (d >= 60) return { label: 'H', color: '#f59e0b' };
+    if (d >= 40) return { label: 'M', color: '#3b82f6' };
+    if (d >= 20) return { label: 'L', color: '#10b981' };
+    return { label: 'VL', color: '#34d399' };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// QUALITY SCORING
+// ═══════════════════════════════════════════════════════════════
+const JUNK_PATTERNS = [
+    /\s{2,}/, /\|{2,}/, /\[.*\[/, /\(.*\(/, /[^\w\s'\-&.,()\/+%#@!?:]{2,}/,
+    /^\d+$/, /^[a-z]{1,2}$/, /webhook|api key|json\b|xml\b|html tag|css class|onclick/i,
+    /\btest\b|\bdemo\b|\bsample\b|\bfoo\b|\bbar\b/i, /(.)\1{4,}/, /\b(xxx|nsfw)\b/i,
+    // URL fragments scraped as keywords
+    /^https?[\s:\/]/, /^www\./i, /\.com\/|\.org\/|\.net\//i,
+    // Piracy / warez / blackhat tool keywords
+    /\b(feedurbrain|nitroflare|rapidshare|blackhat|torrent|warez|cracked|nulled|piracy)\b/i,
+    // Typos with doubled/transposed consonants common in scraper exports
+    /\bgenration\b|\bgernator\b|\bstratgies\b|\bautomted\b|\bprofessinal\b/i,
+];
+
+const EMPTY_SEEDS = new Set(['software','tool','tools','app','website','service','services','platform','solution','solutions','product','products','company','business','management','system','data','marketing','digital','online','web','content','media','technology','tech','process','strategy','information','work','job','jobs','career']);
+
+// Pre-computed constants — defined ONCE, not rebuilt on every keyword call
+const ALL_SIGNALS = Object.values(SIGNALS).flat(); // flat list for hasSignal check
+
+const CONTENT_INDICATORS = new Set([
+    'agency','agencies','consultant','consulting','management',
+    'outsource','freelance','retainer','proposal','contract',
+    'marketing','advertising','branding','campaign','analytics',
+    'outreach','prospecting','conversion','funnel','acquisition',
+    'retention','engagement','targeting','segmentation','copywriting',
+    'positioning','strategy','strategies','generation','automation',
+    'pipeline','nurture','sequence','qualification','scoring',
+    'sales','selling','revenue','crm','navigator','platform',
+    'software','integration','optimization','seo','ppc','sem',
+    'organic','traffic','ranking','visibility','content','social',
+    'email','newsletter','webinar','framework','methodology',
+    'b2b','b2c','saas','enterprise','startup','digital','service',
+    'services','company','companies','provider','solution',
+]);
+
+const REJECTION_REASONS = {
+    vague_seed: 'Single vague seed word — no content potential',
+    low_score: 'Quality score below threshold',
+    low_volume: 'Search volume below minimum',
+    too_many_words: 'Too many words (exceeds max)',
+    intent_filtered: 'Filtered out by intent selection',
+    near_duplicate: 'Near-duplicate of another keyword',
+};
+
+function scoreKeyword(kw, volume) {
+    const k = kw.toLowerCase().trim();
+    const words = k.split(/\s+/).filter(Boolean);
+    let score = 0;
+
+    for (const p of JUNK_PATTERNS) {
+        if (p.test(k)) return { score: 0, pass: false, reason: 'junk_pattern' };
+    }
+
+    if (words.length === 1 && EMPTY_SEEDS.has(k)) {
+        if (volume > 5000) score = 35;
+        else return { score: 10, pass: false, reason: 'vague_seed' };
+    }
+
+    if (words.length === 1) score += 5;
+    else if (words.length === 2) score += 12;
+    else if (words.length <= 5) score += 22;
+    else if (words.length <= 9) score += 20;
+    else if (words.length <= 12) score += 14;
+    else score += 6;
+
+    const realWords = words.filter(w => w.length >= 3 && /^[a-zA-Z]/.test(w));
+    score += Math.round((realWords.length / Math.max(words.length, 1)) * 15);
+
+    const intent = classifyIntent(kw);
+    score += intent !== 'navigational' ? 18 : 5;
+
+    const hasSignal = ALL_SIGNALS.some(s => k.includes(s));
+    if (hasSignal) score += 15;
+
+    if (volume > 10000) score += 20;
+    else if (volume > 1000) score += 15;
+    else if (volume > 100) score += 10;
+    else if (volume > 0) score += 5;
+
+    const specialCount = (k.match(/[^a-zA-Z0-9\s'\-&]/g) || []).length;
+    if (specialCount > 2) score -= specialCount * 4;
+
+    const stopwords = ['the','a','an','to','for','of','in','on','at','by'];
+    if (stopwords.includes(words[0]) && words.length <= 2) score -= 10;
+
+    if (/^(how|what|why|when|where|which|who|is|are|can|does|do|should)\b/i.test(k)) score += 8;
+
+    const modifiers = ['best','top','cheap','affordable','free','easy','fast','quick','complete','ultimate','full','simple'];
+    if (modifiers.some(m => k.includes(m))) score += 8;
+
+    // ── PATTERN-LESS PENALTY ─────────────────────────────────────
+    // Designed to reject random noun stacks like "linkedin lead ninja",
+    // "lead gibbon", "pencil lead indonesia" — keywords with no
+    // recognisable search intent and no business context.
+    //
+    // BUG FIX: The old version rejected LEGITIMATE keywords like
+    // "linkedin lead generation" (score 56, barely passing) and
+    // "linkedin agency" (score 41, FAILING) because they have no
+    // question/modifier/comparison word — even though they're the
+    // site's core topic keywords.
+    //
+    // Fix: CONTENT_INDICATORS and ALL_SIGNALS are pre-computed constants
+    // defined outside this function — not rebuilt on every call.
+    const hasAnySignal  = hasSignal;
+    const hasQuestion   = /^(how|what|why|when|where|which|who|is|are|can|does|do|should)\b/i.test(k);
+    const hasModifier   = modifiers.some(m => k.includes(m));
+    const hasComparison = / vs | versus /.test(k);
+    const hasBizContext = words.some(w => CONTENT_INDICATORS.has(w));
+    const hasNoPattern  = !hasAnySignal && !hasQuestion && !hasComparison && !hasBizContext;
+
+    // BUG FIX: the old code fired BOTH penalties on 4-word zero-volume keywords
+    // (-14 + -20 = -34). Now they are mutually exclusive.
+    if (hasNoPattern && !hasModifier) {
+        // Zero volume + no pattern = very likely off-topic noise
+        if (volume === 0) score -= 22;
+        // Has some volume but still no pattern = suspicious, penalise less
+        else score -= 10;
+    }
+
+    return { score: Math.max(0, Math.min(100, Math.round(score))), pass: true, intent };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONTENT TYPE — Service Page vs Blog
+// ═══════════════════════════════════════════════════════════════
+// A SERVICE PAGE is only warranted when the keyword signals someone
+// wants to HIRE or BUY a service — not just learn about a topic.
+// "best linkedin lead generation companies" = blog (comparison list)
+// "linkedin lead generation agency pricing" = service page (buying signal)
+// "how to generate leads on linkedin" = blog (educational)
+// "proven content framework for inbound leads" = blog (educational)
+function contentType(intent, kw) {
+    const k = kw.toLowerCase().trim();
+    const words = k.split(/\s+/);
+
+    // ─────────────────────────────────────────────────────────────────────
+    // TIER 1: CLEAR SERVICE PAGE INTENT (HIRE / BUY / COMMERCIAL)
+    // ─────────────────────────────────────────────────────────────────────
+    const SERVICE_SIGNALS = [
+        // BUYING/HIRING INTENT
+        'buy ', 'purchase', 'order', 'pricing', 'price', 'cost', 'quote',
+        'package', 'plan', 'deal', 'discount', 'coupon', 'offer', 'free trial',
+        
+        // SERVICE PROVIDER INTENT
+        'agency', 'agencies', 'service', 'services', 'provider', 'providers',
+        'company', 'companies', 'firm', 'consultant', 'consulting',
+        'hire', 'freelancer', 'contractor', 'outsource',
+        
+        // MANAGED/PROFESSIONAL SERVICES
+        'done for you', 'done-for-you', 'managed', 'managed service',
+        'white label', 'partner', 'work with',
+        
+        // COMMERCIAL COMPARISON
+        'vs ', 'versus', 'compare', 'alternative', 'better than'
+    ];
+
+    // ─────────────────────────────────────────────────────────────────────
+    // TIER 2: CLEAR BLOG INTENT (LEARN / UNDERSTAND / HOW-TO)
+    // ─────────────────────────────────────────────────────────────────────
+    const BLOG_SIGNALS = [
+        // LEARNING INTENT (HIGHEST PRIORITY)
+        'how to', 'how do', 'how can', 'how will',
+        'what is', 'what are', 'what does', 'explain',
+        'why ', 'when ', 'where ',
+        
+        // GUIDE/TUTORIAL INTENT
+        'guide', 'tutorial', 'step by step', 'step-by-step', 
+        'tips', 'tricks', 'best practices', 'strategies', 'technique',
+        'learn', 'understand', 'beginner', 'advanced',
+        
+        // EDUCATIONAL
+        'course', 'training', 'certification', 'webinar', 'workshop',
+        'template', 'checklist', 'examples', 'sample',
+        
+        // REFERENCE/RESEARCH
+        'definition', 'meaning', 'difference', 'comparison',
+        'tool', 'tools', 'software', 'app', 'platform', 'feature',
+        'benefits', 'advantages', 'disadvantages'
+    ];
+
+    const serviceSignalCount = SERVICE_SIGNALS.filter(s => k.includes(s)).length;
+    const blogSignalCount = BLOG_SIGNALS.filter(s => k.includes(s)).length;
+
+    // ─────────────────────────────────────────────────────────────────────
+    // DECISION LOGIC (CORRECTED)
+    // ─────────────────────────────────────────────────────────────────────
+
+    // RULE 1: Question format ALWAYS wins (how, what, why)
+    const isQuestion = /^(how|what|why|when|where|which|who)\b/.test(k);
+    if (isQuestion && intent === 'informational') {
+        // Exception: "how to hire/buy" still service page
+        if (/^how to (hire|buy|get|find|book)\b/.test(k) && serviceSignalCount > 0) {
+            return 'page';
+        }
+        return 'blog';
+    }
+
+    // RULE 2: Clear service intent + service signals = SERVICE PAGE
+    if ((intent === 'transactional' || intent === 'commercial') && serviceSignalCount > 0) {
+        // Check for comparison-specific signals
+        if (k.includes(' vs ') || k.includes('versus') || k.includes('comparison') || k.includes('compare')) {
+            return 'comparison';
+        }
+        // Check for pricing-specific signals
+        if (k.includes('pricing') || k.includes('price') || k.includes('cost')) {
+            return 'pricing';
+        }
+        return 'page';
+    }
+
+    // RULE 3: Mixed signals (both service AND blog signals)
+    if (serviceSignalCount > 0 && blogSignalCount > 0) {
+        // If blog signals are stronger → BLOG (educational approach to service)
+        if (blogSignalCount > serviceSignalCount) {
+            return 'blog';
+        }
+        // If service signals are stronger → SERVICE PAGE
+        if (serviceSignalCount > blogSignalCount) {
+            // Check if it's comparison or pricing
+            if (k.includes(' vs ') || k.includes('versus') || k.includes('comparison')) {
+                return 'comparison';
+            }
+            if (k.includes('pricing') || k.includes('price') || k.includes('cost')) {
+                return 'pricing';
+            }
+            return 'page';
+        }
+        // If equal, favor blog (safer)
+        return 'blog';
+    }
+
+    // RULE 4: Only blog signals → BLOG
+    if (blogSignalCount > 0 && serviceSignalCount === 0) {
+        // Check for comparison or guide-specific
+        if (k.includes(' vs ') || k.includes('versus')) {
+            return 'comparison';
+        }
+        if (k.includes('guide') || k.includes('tutorial') || k.includes('step by step')) {
+            return 'guide';
+        }
+        return 'blog';
+    }
+
+    // RULE 5: Only service signals, NO blog signals → SERVICE PAGE
+    if (serviceSignalCount > 0 && blogSignalCount === 0) {
+        if (k.includes('pricing') || k.includes('price') || k.includes('cost')) {
+            return 'pricing';
+        }
+        if (k.includes(' vs ') || k.includes('versus')) {
+            return 'comparison';
+        }
+        return 'page';
+    }
+
+    // RULE 6: Use intent as fallback
+    if (intent === 'transactional' || intent === 'commercial') {
+        return 'page';
+    }
+
+    // RULE 7: Default to blog (safer)
+    return 'blog';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TITLE GENERATION
+// ═══════════════════════════════════════════════════════════════
+// ── CONTEXT-AWARE TITLE GENERATOR (v4) ───────────────────────
+function suggestTitle(kw, intent) {
+    const k = kw.trim();
+    const kl = k.toLowerCase();
+    const yr = new Date().getFullYear();
+
+    // Title Case helper (skips prepositions/articles mid-string)
+    const tc = s => s.trim().replace(/\b\w+/g, (w, pos) => {
+        const skip = new Set(['a','an','the','and','but','or','for','nor','on','at','to','by','in','of','up','as','if','is','are','vs']);
+        return (pos === 0 || !skip.has(w.toLowerCase())) ? w[0].toUpperCase() + w.slice(1) : w;
+    });
+
+    // Strip common question prefixes so we can reframe them properly
+    const stripped = k.replace(/^(how to|what is|what are|how do you|how does|how do|why is|why are|why does|when to|where to|who is|who are|should i|can i)\s+/i, '').trim();
+
+    // ── Pattern detection ─────────────────────────────────────
+    const isHowTo      = /^how to\b/i.test(k);
+    const isWhatIs     = /^what (is|are)\b/i.test(k);
+    const isWhy        = /^why\b/i.test(k);
+    const isVs         = /\bvs\.?\b|\bversus\b/i.test(kl);
+    const isAlternative= /\balternative(s)?\b/i.test(kl) && !isVs;
+    const isReview     = /\breview(s)?\b/i.test(kl) && !isHowTo;
+    const isBestList   = /^best\s/i.test(kl);
+    const isTopN       = /^top\s+\d+/i.test(kl);
+    const isPricing    = /\b(pricing|price|cost(?: of)?|how much (does|is))\b/i.test(kl);
+    const isNearMe     = /\bnear me\b/i.test(kl);
+    const isComparison = /\bcompar(e|ison)\b/i.test(kl) && !isVs;
+    const isTools      = /\b(tools?|software|apps?|platforms?|systems?)\b/i.test(kl);
+    const isAgency     = /\b(agency|agencies|services?|company|companies|firm)\b/i.test(kl);
+    const isGuide      = /\b(guide|tutorial|checklist|template)\b/i.test(kl) && !isHowTo;
+    const isWorthIt    = /\bworth it\b/i.test(kl);
+    const isCheap      = /\b(cheap|affordable|free)\b/i.test(kl);
+    const isCertified  = /\b(certif|certificat|exam|test\b)/i.test(kl);
+
+    // ── Specific formulas in priority order ──────────────────
+    if (isHowTo && isPricing) return `How Much Does ${tc(stripped.replace(/\b(pricing|price|cost(?: of)?)\b/i,'').trim())} Cost? [${yr} Pricing]`;
+    if (isHowTo)              return `How to ${tc(stripped)}: Step-by-Step Guide (${yr})`;
+    if (isWhatIs)             return `What Is ${tc(stripped)}? Definition, Examples & How It Works`;
+    if (isWhy)                return `Why ${tc(stripped.replace(/^(is|are|does|do)\s+/i,''))}: Key Reasons Explained`;
+    if (isVs)                 return `${tc(k.replace(/\bvs\.?\b/i, 'vs.'))} — Full Comparison [${yr}]`;
+    if (isAlternative)        return `Best ${tc(k.replace(/\balternative(s)?\b/i,'').trim())} Alternatives in ${yr}: Top Picks`;
+    if (isReview && isWorthIt)return `${tc(k.replace(/\b(review(s)?|worth it)\b/ig,'').trim())} Review: Is It Worth It? [${yr}]`;
+    if (isReview)             return `${tc(k.replace(/\breview(s)?\b/i,'').trim())} Review ${yr}: Pros, Cons & Honest Verdict`;
+    if (isBestList && isTools)return `Best ${tc(k.replace(/^best\s+/i,''))} in ${yr} — Ranked & Reviewed`;
+    if (isBestList)           return `Best ${tc(k.replace(/^best\s+/i,''))} in ${yr}: Expert Picks`;
+    if (isTopN)               return `${tc(k)}: Expert-Curated List (${yr})`;
+    if (isPricing)            return `${tc(k.replace(/\b(pricing|price|cost(?: of)?)\b/i,'').trim())} Pricing ${yr}: Complete Cost Breakdown`;
+    if (isNearMe)             return `${tc(k.replace(/\bnear me\b/i,'').trim())}: Find the Best Options Near You`;
+    if (isComparison)         return `${tc(k.replace(/\bcompar(e|ison)\b/i,'').trim())}: Which One Should You Choose? [${yr}]`;
+    if (isGuide)              return `The Complete ${tc(k.replace(/\b(guide|tutorial|checklist|template)\b/i,'').trim())} Guide (${yr})`;
+    if (isCheap)              return `${tc(k)}: Best Affordable Options in ${yr}`;
+    if (isAgency && intent === 'transactional') return `${tc(k)}: Top-Rated Services & How to Choose`;
+    if (isCertified)          return `${tc(k)}: Everything You Need to Pass in ${yr}`;
+
+    // ── Intent-based fallbacks ────────────────────────────────
+    if (intent === 'transactional') return `${tc(k)}: Get Started Today — Pricing & Options`;
+    if (intent === 'commercial')    return `${tc(k)}: Complete Buyer's Guide (${yr})`;
+    if (intent === 'informational') return `${tc(k)}: Everything You Need to Know [${yr}]`;
+    return `${tc(k)} — Official Resource`;
+}
+
+// ── N-GRAM ENTITY CLUSTERING (v4.1 — 3-word minimum anchor) ──
+
+const CLUSTER_STOPS = new Set(['how','to','what','is','are','why','when','where','which','who','a','an','the','and','or','for','in','on','at','of','do','does','can','should','best','top','with','your','my','our','their','get','use','make','need','want','find','using','about','into','from','by','as','if','be','was','has','have','will','vs','versus','its','it','this','that','these','those','not','no','more','most','very','also','too','so','but','than','then','now','new','all','any','some','other','i','we','you','they','up','out','back','just','over','after','before','between','through','without','within','plus','since','per','via','re','un','pre','non','co','de','both','each','every','many','much','few','less','same','such','long','high','low','big','small','great','good','well','better','look','here','know','think']);
+
+function tokenizeForCluster(kw) {
+    // Basic plural normalisation: "leads"→"lead", "forms"→"form", "tools"→"tool"
+    // This prevents "linkedin lead" and "linkedin leads" from becoming different anchors
+    // which was causing the same topic to split into 5 separate clusters.
+    const depluralise = w => {
+        if (w.length >= 3 && w.endsWith('s') && !w.endsWith('ss') && !w.endsWith('is') && !w.endsWith('us') && !w.endsWith('ous'))
+            return w.slice(0, -1);
+        return w;
+    };
+    return kw.toLowerCase()
+        .split(/[\s\-_\/]+/)
+        .map(w => w.replace(/[^a-z0-9]/g, ''))
+        .filter(w => w.length > 2 && !CLUSTER_STOPS.has(w) && /^[a-z]/.test(w))
+        .map(depluralise);
+}
+
+// Root cause of the 981-keyword cluster bug:
+// "linkedin" + "lead" is a 2-word anchor that matches hundreds of unrelated
+// keywords. "lead ninja", "female lead", "lead gibbon" all get pulled in.
+// Fix: anchors must be 3+ words. 2-word only if 6+ keywords share them.
+// "linkedin" + "lead" is a 2-word anchor that matches hundreds of unrelated
+// keywords. "lead ninja", "female lead", "lead gibbon" all get pulled in.
+// Fix: anchors must be 3+ words (specific topic phrases), not 2-word pairs.
+// 2-word anchors only allowed if they appear in 6+ keywords (not just generic).
+// Hard cap: 25 keywords per cluster max — no dumping grounds.
+
+const MAX_CLUSTER_SIZE = 25;
+
+function clusterKeywords(kwList) {
+    // Step 1: Build n-gram index
+    const ngramIdx = new Map();
+    kwList.forEach((item, i) => {
+        const tokens = tokenizeForCluster(item.keyword);
+
+        // 3–4 word anchors: require 2+ matches (specific enough to be meaningful)
+        for (let len = 3; len <= Math.min(4, tokens.length); len++) {
+            for (let s = 0; s <= tokens.length - len; s++) {
+                const ng = tokens.slice(s, s + len).join(' ');
+                if (!ngramIdx.has(ng)) ngramIdx.set(ng, new Set());
+                ngramIdx.get(ng).add(i);
+            }
+        }
+
+        // 2-word anchors: only added to index, filtered below to require 6+ matches
+        // This prevents "linkedin lead" from grouping 981 unrelated keywords
+        if (tokens.length >= 2) {
+            for (let s = 0; s <= tokens.length - 2; s++) {
+                const ng = tokens.slice(s, s + 2).join(' ');
+                if (!ngramIdx.has(ng)) ngramIdx.set(ng, new Set());
+                ngramIdx.get(ng).add(i);
+            }
+        }
+    });
+
+    // Step 2: Select valid anchors
+    // 3-4 word: need 2+ keywords sharing it
+    // 2-word:   need 6+ keywords sharing it (conservative — prevents false groupings)
+    const anchors = [...ngramIdx.entries()]
+        .filter(([ng, set]) => {
+            const len = ng.split(' ').length;
+            if (len >= 3) return set.size >= 2;
+            if (len === 2) return set.size >= 6;
+            return false;
+        })
+        .map(([ng, set]) => ({ ng, size: set.size, len: ng.split(' ').length, indices: [...set] }))
+        .sort((a, b) => (b.len * 4 + b.size) - (a.len * 4 + a.size)); // longer = higher priority
+
+    // Step 3: Greedy assignment — longest/most-specific anchor wins
+    const assigned = new Map();
+    const clusterMap = new Map();
+
+    anchors.forEach(({ ng, indices }) => {
+        const free = indices.filter(i => !assigned.has(i));
+        if (free.length >= 2) {
+            free.forEach(i => {
+                assigned.set(i, ng);
+                if (!clusterMap.has(ng)) clusterMap.set(ng, []);
+                clusterMap.get(ng).push(i);
+            });
+        }
+    });
+
+    // Step 4: Build cluster objects — enforce MAX_CLUSTER_SIZE cap
+    const clusters = [];
+    clusterMap.forEach((indices, anchor) => {
+        let kws = indices.map(i => ({ ...kwList[i], isPrimary: false }));
+        // Sort by volume desc, then quality score desc
+        kws.sort((a, b) => ((b.volume || 0) - (a.volume || 0)) || ((b.score || 0) - (a.score || 0)));
+
+        // ── SECONDARY QUALITY GATE ──────────────────────────────
+        // Primary keyword always stays. Secondary keywords need a higher
+        // quality bar (65 vs 55) OR meaningful volume (≥100) to be included.
+        // This removes low-quality, low-volume tail garbage from clusters
+        // even when they technically share the anchor phrase.
+        const primary = kws[0];
+        const secondaries = kws.slice(1).filter(k => (k.score || 0) >= 65 || (k.volume || 0) >= 100);
+        kws = [primary, ...secondaries];
+
+        // Hard cap — only keep the most relevant keywords
+        if (kws.length > MAX_CLUSTER_SIZE) kws = kws.slice(0, MAX_CLUSTER_SIZE);
+        kws[0].isPrimary = true;
+        const topicTitle = anchor.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+        clusters.push({ topic: topicTitle, topicAnchor: anchor, keywords: kws });
+    });
+
+    // Step 5: Singletons — keywords that found no 3-word anchor match
+    kwList.forEach((item, i) => {
+        if (assigned.has(i)) return;
+        const tokens = tokenizeForCluster(item.keyword);
+        const topicTitle = tokens.slice(0, 3).map(w => w[0].toUpperCase() + w.slice(1)).join(' ') || item.keyword;
+        clusters.push({ topic: topicTitle, topicAnchor: tokens.join(' '), keywords: [{ ...item, isPrimary: true }] });
+    });
+
+    return clusters.sort((a, b) => b.keywords.length - a.keywords.length);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE 1: CANNIBALIZATION DETECTION
+// ═══════════════════════════════════════════════════════════════
+function detectCannibalization(clusterList, simThreshold) {
+    clusterList.forEach(cluster => {
+        // Within a cluster: if 2+ keywords have the same intent AND same content type → cannibalization risk
+        const sameTarget = {};
+        cluster.keywords.forEach(kw => {
+            const key = `${kw.intent}-${kw.ctype}`;
+            if (!sameTarget[key]) sameTarget[key] = [];
+            sameTarget[key].push(kw);
+        });
+        cluster.cannibalGroups = Object.values(sameTarget).filter(g => g.length > 1);
+        cluster.hasCannibal = cluster.cannibalGroups.length > 0;
+    });
+    return clusterList;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NEW v4: OPPORTUNITY SCORE, WORD COUNT TARGET, QUICK WIN FLAG
+// ═══════════════════════════════════════════════════════════════
+
+// Opportunity Score: single priority signal combining volume, difficulty, intent
+function computeOpportunityScore(kw) {
+    const vol = kw.volume || 0;
+    // Log-normalized volume score
+    const volScore = vol >= 100000 ? 100 : vol >= 50000 ? 90 : vol >= 10000 ? 75 : vol >= 5000 ? 65 : vol >= 1000 ? 50 : vol >= 100 ? 30 : vol > 0 ? 15 : 0;
+    // Inverse difficulty (lower KD = higher opportunity)
+    const diffScore = Math.max(0, 100 - kw.diff);
+    // Intent value: transactional & commercial keywords have higher business value
+    const intentScore = { transactional: 100, commercial: 85, informational: 65, navigational: 20 }[kw.intent] || 50;
+    // Quality & SERP bonuses
+    const qualBonus  = kw.score >= 80 ? 12 : kw.score >= 65 ? 6 : 0;
+    const serpBonus  = kw.serpFeatures.includes('FS') ? 10 : kw.serpFeatures.includes('PAA') ? 5 : 0;
+    return Math.round(Math.min(99, volScore * 0.35 + diffScore * 0.30 + intentScore * 0.25 + qualBonus * 0.05 + serpBonus * 0.05));
+}
+
+// Recommended word count based on intent + keyword format signals
+function getWordCountTarget(intent, kw) {
+    const kl = kw.toLowerCase();
+    if (intent === 'navigational') return '300–500w';
+    if (intent === 'transactional') return '600–900w';
+    if (/^how to\b/i.test(kl) || /\bstep by step\b/.test(kl)) return '1,500–2,500w';
+    if (/\bvs\.?\b|\bversus\b|\bcompar|\breview(s)?\b/i.test(kl)) return '1,200–2,000w';
+    if (/^(best|top \d+)\b/i.test(kl)) return '1,500–2,500w';
+    if (/\b(guide|tutorial|checklist|template|explained)\b/i.test(kl)) return '1,500–2,500w';
+    if (/^(what is|what are)\b/i.test(kl)) return '800–1,500w';
+    if (intent === 'commercial') return '1,000–1,800w';
+    return '1,200–2,000w'; // informational default
+}
+
+// A keyword is a Quick Win if it's low-competition AND has real volume AND isn't just navigational
+function isQuickWin(kw) {
+    return kw.diff <= 42 && (kw.volume || 0) > 0 && kw.intent !== 'navigational' && kw.score >= 55;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN RUN
+// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════
+// QUALITY FILTER - REJECT GARBAGE KEYWORDS
+// ═══════════════════════════════════════════════════════════════════════════
+function shouldRejectKeyword(keyword, volume, qualityScore, intent) {
+    const k = keyword.toLowerCase().trim();
+
+    // RULE 1: Zero volume + low quality + no clear intent = REJECT
+    if (volume === 0 && qualityScore < 65) {
+        return { rejected: true, reason: 'Zero volume with low quality score' };
+    }
+
+    // RULE 2: Obvious job title patterns = REJECT
+    const jobTitlePatterns = [
+        /linkedin.*(lead\s+engineer|lead\s+scientist|lead\s+designer|lead\s+manager)/i,
+        /linkedin.*(senior\s+engineer|staff\s+engineer|principal\s+engineer)/i,
+        /linkedin.*\s+(at\s+\w+|for\s+\w+)\s*$/i, // "linkedin X at Company"
+        /linkedin.*(director|vp|cto|cfo|coo)\b/i,
+        /linkedin.*(product\s+manager|project\s+manager|program\s+manager)\b/i
+    ];
+    
+    if (jobTitlePatterns.some(p => p.test(k))) {
+        return { rejected: true, reason: 'Job title/LinkedIn profile pattern' };
+    }
+
+    // RULE 3: Generic brand + person name + linkedin = REJECT
+    const brandJobPatterns = [
+        /linkedin.*(coca\s+cola|apple|google|microsoft|facebook|amazon)/i,
+        /linkedin.*(mckinsey|bcg|bain|goldman|merrill)/i,
+        /linkedin.*\b(einstein|jobs|gates|musk|bezos)\b/i
+    ];
+
+    if (brandJobPatterns.some(p => p.test(k))) {
+        return { rejected: true, reason: 'Brand employee/directory listing' };
+    }
+
+    // RULE 4: Directory listing pattern = REJECT
+    const directoryPatterns = [
+        /\b(at|for|with|in)\s+\w+\s+linkedin$/i,
+        /linkedin\s+(director|lead|manager)\s+(at|for)/i,
+        /who\s+(is|are|leads)\s+\w+\s+linkedin/i
+    ];
+
+    if (directoryPatterns.some(p => p.test(k))) {
+        return { rejected: true, reason: 'Directory/people search listing' };
+    }
+
+    // RULE 5: Too generic + no intent = REJECT
+    if (/^linkedin\s+(jobs|news|profile|news|feed|messages)$/i.test(k)) {
+        return { rejected: true, reason: 'Generic LinkedIn feature keyword' };
+    }
+
+    // RULE 6: Random word combinations with zero volume = REJECT
+    const words = k.split(/\s+/).filter(w => w.length > 2);
+    if (volume === 0 && words.length >= 5 && intent === 'navigational') {
+        return { rejected: true, reason: 'Long random phrase with zero volume' };
+    }
+
+    // RULE 7: Special characters excessive = REJECT
+    const specialChars = (k.match(/[^a-z0-9\s\-&']/gi) || []).length;
+    if (specialChars > 3 || volume === 0) {
+        return { rejected: true, reason: 'Too many special characters' };
+    }
+
+    // NO REJECTION - KEYWORD IS GOOD
+    return { rejected: false, reason: 'Passed quality check' };
+}
+
+function run() {
+    if (!rawRows.length) { alert('Please upload a keyword file first.'); return; }
+
+    const btn = document.getElementById('runBtn');
+    btn.innerHTML = '<span class="spin"></span> Analyzing...';
+    btn.disabled = true;
+
+    buildKwArray();
+
+    const minVol = parseInt(document.getElementById('minVolume').value) || 0;
+    const threshold = parseInt(document.getElementById('qualityThreshold').value) || 55;
+    const maxWords = parseInt(document.getElementById('maxWords').value) || 12;
+    const cannibalThreshold = parseFloat(document.getElementById('cannibalThreshold').value) || 0.65;
+    const intentFilter = selectedIntents.size > 0 ? selectedIntents : null;
+
+    setTimeout(() => {
+        try {
+        // Step 1: Near-duplicate removal
+        const { unique: dedupedKw, dupeIndices } = deduplicateKeywords(allKw);
+
+        // Step 2: Score, filter, enrich each keyword
+        const scored = allKw.map((item, origIdx) => {
+            const isDupe = dupeIndices.has(origIdx);
+            const result = scoreKeyword(item.keyword, item.volume);
+            const intent = result.intent || classifyIntent(item.keyword);
+            const ctype = contentType(intent, item.keyword);
+            const title = suggestTitle(item.keyword, intent);
+            const wordCount = item.keyword.split(/\s+/).filter(Boolean).length;
+            const diff = estimateDifficulty(item.keyword, item.volume);
+            const serpFeatures = predictSerpFeatures(item.keyword, intent);
+
+            // APPLY QUALITY REJECTION
+            const qualityCheck = shouldRejectKeyword(item.keyword, item.volume, result.score, intent);
+
+            let rejectReason = null;
+            if (isDupe) rejectReason = 'near_duplicate';
+            else if (qualityCheck.rejected) rejectReason = 'quality_filter:' + qualityCheck.reason;
+            else if (!result.pass) rejectReason = result.reason;
+            else if (item.volume < minVol) rejectReason = 'low_volume';
+            else if (wordCount > maxWords) rejectReason = 'too_many_words';
+            else if (result.score < threshold) rejectReason = 'low_score';
+            else if (intentFilter && !intentFilter.has(intent)) rejectReason = 'intent_filtered';
+
+            return { ...item, score: result.score, intent, ctype, title, diff, serpFeatures, passes: !rejectReason, rejectReason };
+        });
+
+        curated = scored.filter(k => k.passes).sort((a, b) => (b.volume || 0) - (a.volume || 0));
+        rejected = scored.filter(k => !k.passes);
+
+        // Step 3a: Compute opportunity scores + word count targets + quick win flag
+        curated = curated.map(k => ({
+            ...k,
+            opp: computeOpportunityScore(k),
+            wordTarget: getWordCountTarget(k.intent, k.keyword),
+            quickWin: isQuickWin(k)
+        }));
+
+        // Step 3: Topic clustering
+        let rawClusters = clusterKeywords(curated);
+        clusters = detectCannibalization(rawClusters, cannibalThreshold);
+
+        // Stats
+        const tx = curated.filter(k => k.intent === 'transactional').length;
+        const cm = curated.filter(k => k.intent === 'commercial').length;
+        const inf = curated.filter(k => k.intent === 'informational').length;
+        const nv = curated.filter(k => k.intent === 'navigational').length;
+        const pages = curated.filter(k => k.ctype === 'page').length;
+        const blogs = curated.filter(k => k.ctype === 'blog').length;
+        const cannibalCount = clusters.filter(c => c.hasCannibal).length;
+        const dupeCount = rejected.filter(k => k.rejectReason === 'near_duplicate').length;
+        const quickWinCount = curated.filter(k => k.quickWin).length;
+
+        document.getElementById('statsBar').innerHTML = `
+            <div class="stat good"><div class="stat-n">${curated.length.toLocaleString()}</div><div class="stat-l">Passed</div></div>
+            <div class="stat warn"><div class="stat-n">${rejected.length.toLocaleString()}</div><div class="stat-l">Rejected</div></div>
+            <div class="stat pink"><div class="stat-n">${dupeCount}</div><div class="stat-l">Dupes Removed</div></div>
+            <div class="stat warn"><div class="stat-n">${cannibalCount}</div><div class="stat-l">Cannibal Risk</div></div>
+            <div class="stat info"><div class="stat-n">${clusters.length}</div><div class="stat-l">Clusters</div></div>
+            <div class="stat" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2)"><div class="stat-n" style="color:#10b981">⚡${quickWinCount}</div><div class="stat-l">Quick Wins</div></div>
+            <div class="stat info"><div class="stat-n">${tx}</div><div class="stat-l">Transactional</div></div>
+            <div class="stat amber"><div class="stat-n">${cm}</div><div class="stat-l">Commercial</div></div>
+            <div class="stat purple"><div class="stat-n">${inf}</div><div class="stat-l">Informational</div></div>
+            <div class="stat good"><div class="stat-n">${pages}</div><div class="stat-l">→ Pages</div></div>
+            <div class="stat purple"><div class="stat-n">${blogs}</div><div class="stat-l">→ Blogs</div></div>
+        `;
+
+        // Tabs
+        document.getElementById('tabsEl').innerHTML = `
+            <button class="tab active" onclick="switchTab('all',this)">All (${curated.length})</button>
+            <button class="tab" style="color:#10b981;border-color:rgba(16,185,129,0.3)" onclick="switchTab('quickwins',this)">⚡ Quick Wins (${quickWinCount})</button>
+            <button class="tab" onclick="switchTab('transactional',this)">💳 Transactional (${tx})</button>
+            <button class="tab tab-amber" onclick="switchTab('commercial',this)">🔍 Commercial (${cm})</button>
+            <button class="tab" onclick="switchTab('informational',this)">📖 Informational (${inf})</button>
+            <button class="tab tab-purple" onclick="switchTab('navigational',this)">🧭 Navigational (${nv})</button>
+            <button class="tab" onclick="switchTab('page',this)">📄 Page (${pages})</button>
+            <button class="tab tab-purple" onclick="switchTab('blog',this)">✍ Blog (${blogs})</button>
+        `;
+
+        activeTab = 'all';
+        renderTable();
+        renderClusters();
+        renderPillarStructure();
+        renderRejected();
+
+        document.getElementById('results').classList.add('show');
+
+        // Update result tab labels with counts
+        const tabNav = document.getElementById('resultTabsNav');
+        tabNav.children[0].textContent = `🗂 Clusters (${clusters.length})`;
+        tabNav.children[2].textContent = `✅ Curated (${curated.length})`;
+        tabNav.children[3].textContent = `❌ Rejected (${rejected.length})`;
+
+        // Auto-switch to clusters tab on fresh analysis
+        showResultTab('clusters', tabNav.children[0]);
+
+        btn.innerHTML = '⚡ Analyze & Curate Keywords';
+        btn.disabled = false;
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch(err) {
+            btn.innerHTML = '⚡ Analyze & Curate Keywords';
+            btn.disabled = false;
+            alert('Analysis error: ' + err.message + '\n\nOpen browser console (F12) for details.');
+            console.error('KeywordCurator error:', err);
+        }
+    }, 300);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: CURATED TABLE
+// ═══════════════════════════════════════════════════════════════
+function switchTab(tab, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    activeTab = tab;
+    renderTable();
+}
+
+function renderTable() {
+    const rows = curated.filter(k => {
+        if (activeTab === 'all') return true;
+        if (activeTab === 'quickwins') return k.quickWin;
+        if (activeTab === 'page' || activeTab === 'blog') return k.ctype === activeTab;
+        return k.intent === activeTab;
+    });
+
+    if (!rows.length) { document.getElementById('tBody').innerHTML = `<tr><td colspan="11"><div class="empty">No keywords in this category.</div></td></tr>`; return; }
+
+    const iB = { transactional:'<span class="badge badge-tx">💳 TX</span>', commercial:'<span class="badge badge-cm">🔍 CM</span>', informational:'<span class="badge badge-in">📖 INFO</span>', navigational:'<span class="badge badge-nv">🧭 NAV</span>' };
+    const serpMap = { FS:'serp-fs', PAA:'serp-paa', LOCAL:'serp-local', VIDEO:'serp-video', IMG:'serp-img', SHOP:'serp-shop' };
+    const sc = s => s >= 80 ? '#10b981' : s >= 60 ? '#f59e0b' : '#ef4444';
+    const oc = o => o >= 70 ? '#10b981' : o >= 50 ? '#f59e0b' : '#64748b';
+
+    document.getElementById('tBody').innerHTML = rows.map((r, i) => {
+        const { label, color } = diffLabel(r.diff);
+        const serpHTML = r.serpFeatures.length ? `<div class="serp-tags">${r.serpFeatures.map(f => `<span class="serp-tag ${serpMap[f]}">${f}</span>`).join('')}</div>` : '<span style="color:var(--muted);font-size:0.7rem">—</span>';
+        const qwBadge = r.quickWin ? `<span style="font-family:var(--mono);font-size:0.58rem;padding:0.1rem 0.35rem;border-radius:3px;background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);margin-left:0.3rem" title="Quick Win: low difficulty + real volume">⚡</span>` : '';
+        return `<tr>
+            <td style="color:var(--muted);font-family:var(--mono);font-size:0.72rem">${i+1}</td>
+            <td class="kw-cell">${escHtml(r.keyword)}${qwBadge}</td>
+            <td class="title-cell">${escHtml(r.title)}</td>
+            <td>${iB[r.intent]||r.intent}</td>
+            <td><span class="ctype ctype-${r.ctype}">${r.ctype.toUpperCase()}</span></td>
+            <td>${serpHTML}</td>
+            <td><div class="diff-wrap"><div class="diff-bar"><div class="diff-fill" style="width:${r.diff}%;background:${color}"></div></div><span class="diff-label" style="color:${color}">${label}</span></div></td>
+            <td style="font-family:var(--mono);font-size:0.78rem;text-align:right">${r.volume ? r.volume.toLocaleString() : '—'}</td>
+            <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${r.score}%;background:${sc(r.score)}"></div></div><span class="score-num" style="color:${sc(r.score)}">${r.score}</span></div></td>
+            <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${r.opp||0}%;background:${oc(r.opp||0)}"></div></div><span class="score-num" style="color:${oc(r.opp||0)}">${r.opp||'—'}</span></div></td>
+            <td style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);white-space:nowrap">${r.wordTarget||'—'}</td>
+        </tr>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: CLUSTERS DASHBOARD (v4 accordion table)
+// ═══════════════════════════════════════════════════════════════
+let clusterFilter = 'all';
+
+function filterClusters(f, el) {
+    clusterFilter = f;
+    document.querySelectorAll('.cd-filter').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderClusters();
+}
+
+function renderClusters() {
+    const grid = document.getElementById('clusterGrid');
+    const meta = document.getElementById('clusterMeta');
+    if (!clusters.length) { grid.innerHTML = `<tr><td colspan="7"><div class="empty">No clusters generated.</div></td></tr>`; return; }
+
+    const iB = { transactional:'badge-tx', commercial:'badge-cm', informational:'badge-in', navigational:'badge-nv' };
+    const iLabel = { transactional:'💳 TX', commercial:'🔍 CM', informational:'📖 INFO', navigational:'🧭 NAV' };
+    const diffLabel2 = d => d >= 80 ? { l:'VH', c:'#ef4444' } : d >= 60 ? { l:'H', c:'#f59e0b' } : d >= 40 ? { l:'M', c:'#3b82f6' } : d >= 20 ? { l:'L', c:'#10b981' } : { l:'VL', c:'#34d399' };
+
+    let visible = clusters;
+    if (clusterFilter === 'cannibal')   visible = clusters.filter(c => c.hasCannibal);
+    if (clusterFilter === 'large')      visible = clusters.filter(c => c.keywords.length >= 4);
+    if (clusterFilter === 'quickwins')  visible = clusters.filter(c => c.keywords.some(k => k.quickWin));
+
+    meta.textContent = `${visible.length} of ${clusters.length} clusters`;
+
+    if (!visible.length) { grid.innerHTML = `<tr><td colspan="7"><div class="empty">No clusters match this filter.</div></td></tr>`; return; }
+
+    grid.innerHTML = visible.map((c, idx) => {
+        const primary = c.keywords.find(k => k.isPrimary) || c.keywords[0];
+        const totalVol = c.keywords.reduce((s, k) => s + (k.volume || 0), 0);
+        const domIntent = clusterDominantIntent(c);
+        const qwCount = c.keywords.filter(k => k.quickWin).length;
+
+        // Keyword rows inside the accordion
+        const kwRows = c.keywords.map(kw => {
+            const { l, c: dc } = diffLabel2(kw.diff);
+            return `<div class="cd-kw-item">
+                <span class="cd-kw-star">${kw.isPrimary ? '★' : ''}</span>
+                <span class="cd-kw-text ${kw.isPrimary ? 'primary' : ''}">${escHtml(kw.keyword)}</span>
+                <span class="badge ${iB[kw.intent]||'badge-in'}" style="font-size:0.58rem;padding:0.1rem 0.4rem">${iLabel[kw.intent]||kw.intent}</span>
+                <span class="cd-kw-diff" style="color:${dc}">KD ${l}</span>
+                ${kw.quickWin ? '<span class="cd-qw">⚡</span>' : ''}
+                <span class="cd-kw-vol">${kw.volume ? kw.volume.toLocaleString() : '—'}</span>
+            </div>`;
+        }).join('');
+
+        return `
+        <tr class="cd-row" id="crow-${idx}" onclick="toggleCluster(${idx})">
+            <td><span class="cd-chevron">▶</span></td>
+            <td>
+                <div class="cd-topic">${escHtml(c.topic)}</div>
+                <div class="cd-primary-kw">★ ${escHtml(primary?.keyword || '—')}</div>
+            </td>
+            <td><span class="cd-count">${c.keywords.length} kw</span></td>
+            <td class="cd-vol">${totalVol ? totalVol.toLocaleString() : '—'}</td>
+            <td><span class="badge ${iB[domIntent]||'badge-in'}">${iLabel[domIntent]||domIntent}</span></td>
+            <td>${qwCount > 0 ? `<span style="color:#10b981;font-family:var(--mono);font-size:0.72rem">⚡ ${qwCount}</span>` : '<span class="cd-ok">—</span>'}</td>
+            <td>${c.hasCannibal ? `<span class="cd-cannibal">⚠ Cannibal Risk</span>` : `<span class="cd-ok">✓ Clean</span>`}</td>
+        </tr>
+        <tr class="cd-expand-row" id="cexp-${idx}">
+            <td colspan="7">
+                <div class="cd-kw-list">
+                    ${c.hasCannibal ? `<div style="font-family:var(--mono);font-size:0.7rem;color:var(--red);padding:0.4rem 0 0.6rem;border-bottom:1px solid rgba(239,68,68,0.15);margin-bottom:0.4rem">⚠ ${c.cannibalGroups.map(g => g.length + ' keywords competing for the same ' + g[0].ctype + ' — consolidate into one page').join(' · ')}</div>` : ''}
+                    ${kwRows}
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function toggleCluster(idx) {
+    const row = document.getElementById('crow-' + idx);
+    const exp = document.getElementById('cexp-' + idx);
+    const isOpen = exp.classList.contains('open');
+    row.classList.toggle('expanded', !isOpen);
+    exp.classList.toggle('open', !isOpen);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: PILLAR PAGE STRUCTURE (Feature 8)
+// ═══════════════════════════════════════════════════════════════
+function clusterDominantIntent(cluster) {
+    const counts = {};
+    cluster.keywords.forEach(k => { counts[k.intent] = (counts[k.intent] || 0) + 1; });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'informational';
+}
+
+function clusterTotalVol(cluster) {
+    return cluster.keywords.reduce((s, k) => s + (k.volume || 0), 0);
+}
+
+function isMeaningfulCluster(cluster) {
+    // Filter out clusters whose primary keyword is a single word or looks like noise
+    const primary = cluster.keywords.find(k => k.isPrimary) || cluster.keywords[0];
+    if (!primary) return false;
+    const kw = primary.keyword.trim();
+    if (kw.split(/\s+/).length < 2) return false; // single word = skip
+    if (/^\d+$/.test(kw)) return false;           // pure numbers
+    if (kw.length < 5) return false;
+    return true;
+}
+
+function renderPillarHubBlock(pillar, clusterPages, pillarIndex, totalPillars, tableRows, rowNum, pillarTrack) {
+    const intentColors = { transactional: '#10b981', commercial: '#f59e0b', informational: '#3b82f6', navigational: '#a855f7' };
+    const intentBg = { transactional: 'rgba(16,185,129,0.12)', commercial: 'rgba(245,158,11,0.12)', informational: 'rgba(59,130,246,0.12)', navigational: 'rgba(168,85,247,0.12)' };
+
+    const pillarPrimary = pillar.keywords.find(k => k.isPrimary) || pillar.keywords[0];
+    const pillarVol = clusterTotalVol(pillar);
+    const pillarIntent = clusterDominantIntent(pillar);
+    const hubColor = pillarTrack === 'service' ? 'rgba(16,185,129' : 'rgba(59,130,246';
+
+    let html = `
+    <div class="pillar-section">
+        ${totalPillars > 1 ? `<div class="pillar-section-title">Sub-Pillar ${pillarIndex + 1} of ${totalPillars}</div>` : ''}
+        <div class="pillar-hub" style="background:linear-gradient(135deg,${hubColor},0.12),rgba(0,0,0,0));border-color:${hubColor},0.4)">
+            <div class="pillar-hub-icon">${pillarTrack === 'service' ? '🏢' : '✍️'}</div>
+            <div class="pillar-hub-body">
+                <div class="pillar-hub-label">★ Pillar Page — ${pillarTrack === 'service' ? 'Service Hub' : 'Blog Hub'}</div>
+                <div class="pillar-hub-title">${escHtml(pillarPrimary?.title || pillar.topic)}</div>
+                <div class="pillar-hub-meta">Primary keyword: <span style="color:${pillarTrack==='service'?'#6ee7b7':'#93c5fd'}">${escHtml(pillarPrimary?.keyword || pillar.topic)}</span></div>
+                <div class="pillar-hub-stats">
+                    <span class="pillar-stat-pill">🔑 ${pillar.keywords.length} keywords</span>
+                    <span class="pillar-stat-pill">📊 ${pillarVol.toLocaleString()} vol</span>
+                    <span class="pillar-stat-pill">🔗 ${clusterPages.length} supporting pages</span>
+                    ${pillar.hasCannibal ? '<span class="pillar-stat-pill" style="background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.3)">⚠ Cannibal risk</span>' : ''}
+                </div>
+            </div>
+        </div>`;
+
+    tableRows.push({
+        num: rowNum++, track: pillarTrack === 'service' ? '🏢 Service' : '✍️ Blog',
+        title: pillarPrimary?.title || pillar.topic,
+        keyword: pillarPrimary?.keyword || pillar.topic,
+        type: 'Pillar Page', intent: pillarIntent, volume: pillarVol, priority: 'P1',
+        linksTo: clusterPages.slice(0,4).map(c => (c.keywords.find(k=>k.isPrimary)||c.keywords[0])?.keyword || c.topic).join(' | ') || '—'
+    });
+
+    if (clusterPages.length) {
+        html += `<div class="pillar-connector"><div class="pillar-connector-line" style="background:linear-gradient(to bottom,${hubColor},0.5),${hubColor},0.2))"></div></div>`;
+        html += `<div class="pillar-clusters-grid">`;
+
+        clusterPages.forEach(cluster => {
+            const primary = cluster.keywords.find(k => k.isPrimary) || cluster.keywords[0];
+            // Filter supporting keywords: skip single-word, too-short, or low-score ones
+            const supporting = cluster.keywords
+                .filter(k => !k.isPrimary && k.keyword.split(/\s+/).length >= 2 && (k.score || 0) >= 40)
+                .slice(0, 4);
+            const clusterVol = clusterTotalVol(cluster);
+            const intent = clusterDominantIntent(cluster);
+            const iColor = intentColors[intent] || '#64748b';
+            const iBg = intentBg[intent] || 'rgba(100,116,139,0.12)';
+            const pageLabel = pillarTrack === 'service' ? '📄 Service Page' : '📝 Blog Post';
+
+            html += `
+            <div class="pillar-cluster-card" style="border-color:${hubColor},0.18)">
+                <div class="pc-header">
+                    <div>
+                        <div class="pc-label">${pageLabel}</div>
+                        <div class="pc-title">${escHtml(primary?.title || cluster.topic)}</div>
+                    </div>
+                    <div class="pc-vol">${clusterVol ? clusterVol.toLocaleString() : '—'}<br><span style="font-size:0.6rem">vol</span></div>
+                </div>
+                <span class="pc-intent-badge" style="background:${iBg};color:${iColor};border:1px solid ${iColor}40">${intent}</span>
+                ${cluster.hasCannibal ? `<div style="font-family:var(--mono);font-size:0.64rem;color:var(--red);margin-bottom:0.4rem">⚠ Cannibalization risk — consolidate</div>` : ''}
+                <div style="font-family:var(--mono);font-size:0.7rem;color:${pillarTrack==='service'?'#6ee7b7':'#93c5fd'};margin-bottom:0.6rem">🎯 ${escHtml(primary?.keyword || cluster.topic)}</div>
+                ${supporting.length ? `
+                <div class="pc-supporting">
+                    <div class="pc-support-title">Supporting keywords</div>
+                    ${supporting.map(kw => `
+                    <div class="pc-kw-item">
+                        <span class="pc-link-tag">↗</span>
+                        <span>${escHtml(kw.keyword)}</span>
+                        <span class="pc-kw-vol">${kw.volume ? kw.volume.toLocaleString() : '—'}</span>
+                    </div>`).join('')}
+                    ${cluster.keywords.filter(k=>!k.isPrimary).length > 4 ? `<div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);padding-top:0.25rem">+${cluster.keywords.filter(k=>!k.isPrimary).length - 4} more</div>` : ''}
+                </div>` : ''}
+                <div style="margin-top:0.75rem;padding-top:0.6rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:0.6rem;color:var(--muted)">
+                    🔗 Internal link → <span style="color:${pillarTrack==='service'?'#6ee7b7':'#93c5fd'}">${escHtml((pillarPrimary?.keyword || pillar.topic).slice(0,45))}${(pillarPrimary?.keyword||pillar.topic).length>45?'…':''}</span>
+                </div>
+            </div>`;
+
+            tableRows.push({
+                num: rowNum++, track: pillarTrack === 'service' ? '🏢 Service' : '✍️ Blog',
+                title: primary?.title || cluster.topic,
+                keyword: primary?.keyword || cluster.topic,
+                type: pillarTrack === 'service' ? 'Service Page' : 'Blog Post',
+                intent, volume: clusterVol, priority: pillarIndex === 0 ? 'P2' : 'P3',
+                linksTo: `Pillar: ${(pillarPrimary?.keyword || pillar.topic).slice(0, 40)}`
+            });
+        });
+
+        html += `</div>`;
+    }
+    html += `</div>`;
+    return { html, rowNum };
+}
+
+function renderPillarStructure() {
+    const el = document.getElementById('pillarStructureEl');
+    const tableBody = document.getElementById('pillarTableBody');
+
+    if (!clusters.length) {
+        el.innerHTML = `<div class="empty">Run the analysis first to generate your pillar structure.</div>`;
+        tableBody.innerHTML = '';
+        return;
+    }
+
+    // ── SPLIT CLUSTERS INTO SERVICE vs BLOG ──────────────────────
+    // Use the actual content type assigned to keywords (ctype='page' or 'blog')
+    // NOT intent — because "commercial" intent ≠ service page.
+    // A cluster is a SERVICE cluster only if the majority of its keywords
+    // are tagged as 'page' (i.e. have genuine hiring/buying signals).
+    const meaningful = clusters.filter(isMeaningfulCluster);
+
+    const clusterIsService = c => {
+        const pageCount = c.keywords.filter(k => k.ctype === 'page').length;
+        return pageCount > c.keywords.length / 2; // majority must be service pages
+    };
+
+    const serviceClusters = meaningful
+        .filter(clusterIsService)
+        .sort((a, b) => clusterTotalVol(b) - clusterTotalVol(a));
+
+    const blogClusters = meaningful
+        .filter(c => !clusterIsService(c))
+        .filter(c => clusterDominantIntent(c) !== 'navigational')
+        .sort((a, b) => clusterTotalVol(b) - clusterTotalVol(a));
+
+    // Navigational clusters → ignored (they're brand/direct searches, not content pages)
+    const ignoredCount = clusters.length - meaningful.length +
+        meaningful.filter(c => clusterDominantIntent(c) === 'navigational').length;
+
+    const MAX_CLUSTER_PAGES = 7; // cluster pages per pillar hub
+    let html = '';
+    let tableRows = [];
+    let rowNum = 1;
+
+    // ── IGNORED NOTICE ────────────────────────────────────────────
+    if (ignoredCount > 0) {
+        html += `<div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);background:rgba(100,116,139,0.07);border:1px solid var(--border);border-radius:6px;padding:0.65rem 1rem;margin-bottom:1.25rem">
+            🚫 <strong style="color:var(--text)">${ignoredCount} cluster(s) ignored</strong> — single-word keywords, noise terms, or navigational searches with no content page value have been excluded from the pillar structure.
+        </div>`;
+    }
+
+    // ── SERVICE PAGE PILLAR ───────────────────────────────────────
+    if (serviceClusters.length) {
+        html += `
+        <div style="margin-bottom:0.5rem;padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(6,182,212,0.04));border:1.5px solid rgba(16,185,129,0.25);border-radius:10px;display:flex;align-items:center;gap:1rem">
+            <div style="font-size:1.8rem">🏢</div>
+            <div>
+                <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:0.2rem">Track A — Service Pages</div>
+                <div style="font-size:0.95rem;font-weight:700;color:#fff">Transactional &amp; Commercial Intent Keywords</div>
+                <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-top:0.2rem">${serviceClusters.length} clusters → ${serviceClusters.reduce((s,c)=>s+c.keywords.length,0)} keywords → use for service/landing pages</div>
+            </div>
+        </div>`;
+
+        // Chunk service clusters into sub-pillars if > MAX_CLUSTER_PAGES
+        for (let i = 0; i < serviceClusters.length; i += MAX_CLUSTER_PAGES) {
+            const group = serviceClusters.slice(i, i + MAX_CLUSTER_PAGES);
+            const pillar = group[0];
+            const clusterPages = group.slice(1);
+            const totalSubPillars = Math.ceil(serviceClusters.length / MAX_CLUSTER_PAGES);
+            const result = renderPillarHubBlock(pillar, clusterPages, Math.floor(i/MAX_CLUSTER_PAGES), totalSubPillars, tableRows, rowNum, 'service');
+            html += result.html;
+            rowNum = result.rowNum;
+        }
+    } else {
+        html += `<div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);padding:1.5rem;text-align:center;background:var(--surface2);border-radius:8px;margin-bottom:1rem">🏢 No transactional/commercial clusters found. Upload keywords with buying or comparison intent for service page pillars.</div>`;
+    }
+
+    // Spacer between tracks
+    html += `<div style="margin:2rem 0;border-top:1px dashed var(--border);display:flex;align-items:center;justify-content:center"><span style="background:var(--surface);padding:0 1rem;font-family:var(--mono);font-size:0.65rem;color:var(--muted);letter-spacing:0.08em">── BLOG PILLAR TRACK BELOW ──</span></div>`;
+
+    // ── BLOG PILLAR ───────────────────────────────────────────────
+    if (blogClusters.length) {
+        html += `
+        <div style="margin-bottom:0.5rem;padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(168,85,247,0.04));border:1.5px solid rgba(59,130,246,0.25);border-radius:10px;display:flex;align-items:center;gap:1rem">
+            <div style="font-size:1.8rem">✍️</div>
+            <div>
+                <div style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.2rem">Track B — Blog Posts</div>
+                <div style="font-size:0.95rem;font-weight:700;color:#fff">Informational Intent Keywords</div>
+                <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-top:0.2rem">${blogClusters.length} clusters → ${blogClusters.reduce((s,c)=>s+c.keywords.length,0)} keywords → use for blog articles &amp; guides</div>
+            </div>
+        </div>`;
+
+        for (let i = 0; i < blogClusters.length; i += MAX_CLUSTER_PAGES) {
+            const group = blogClusters.slice(i, i + MAX_CLUSTER_PAGES);
+            const pillar = group[0];
+            const clusterPages = group.slice(1);
+            const totalSubPillars = Math.ceil(blogClusters.length / MAX_CLUSTER_PAGES);
+            const result = renderPillarHubBlock(pillar, clusterPages, Math.floor(i/MAX_CLUSTER_PAGES), totalSubPillars, tableRows, rowNum, 'blog');
+            html += result.html;
+            rowNum = result.rowNum;
+        }
+    } else {
+        html += `<div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);padding:1.5rem;text-align:center;background:var(--surface2);border-radius:8px;margin-bottom:1rem">✍️ No informational clusters found. Upload informational/how-to keywords for blog pillar structure.</div>`;
+    }
+
+    el.innerHTML = html;
+
+    // ── ROADMAP TABLE ─────────────────────────────────────────────
+    const intentBadge = { transactional:'badge-tx', commercial:'badge-cm', informational:'badge-in', navigational:'badge-nv' };
+    const priorityClass = { P1:'pst-p1', P2:'pst-p2', P3:'pst-p3' };
+
+    tableBody.innerHTML = tableRows.length ? tableRows.map(r => `
+        <tr>
+            <td style="color:var(--muted);font-size:0.72rem">${r.num}</td>
+            <td style="font-family:var(--mono);font-size:0.7rem;white-space:nowrap">${r.track}</td>
+            <td style="font-size:0.81rem;color:var(--text);max-width:240px;word-break:break-word;line-height:1.4">${escHtml(r.title)}</td>
+            <td class="pst-pillar-kw" style="max-width:180px;word-break:break-word">${escHtml(r.keyword)}</td>
+            <td><span style="font-family:var(--mono);font-size:0.66rem;padding:0.15rem 0.45rem;border-radius:3px;background:${r.type==='Pillar Page'?'rgba(168,85,247,0.12)':r.type==='Service Page'?'rgba(16,185,129,0.1)':'rgba(59,130,246,0.1)'};color:${r.type==='Pillar Page'?'var(--purple)':r.type==='Service Page'?'var(--green)':'var(--accent)'}">${r.type}</span></td>
+            <td><span class="badge ${intentBadge[r.intent]||'badge-in'}">${r.intent}</span></td>
+            <td style="font-family:var(--mono);font-size:0.78rem">${r.volume ? r.volume.toLocaleString() : '—'}</td>
+            <td><span class="pst-priority ${priorityClass[r.priority]||'pst-p3'}">${r.priority}</span></td>
+            <td style="font-family:var(--mono);font-size:0.66rem;color:var(--muted);max-width:200px;word-break:break-word">${escHtml(r.linksTo)}</td>
+        </tr>`).join('')
+    : `<tr><td colspan="9"><div class="empty">No pillar pages generated yet.</div></td></tr>`;
+
+    window._pillarTableRows = tableRows;
+}
+
+function exportPillarCSV() {
+    if (!window._pillarTableRows || !window._pillarTableRows.length) { alert('Run analysis first.'); return; }
+    let csv = 'Priority,#,Track,Page Title,Target Keyword,Type,Intent,Total Volume,Links To\n';
+    window._pillarTableRows.forEach(r => {
+        csv += `"${r.priority}","${r.num}","${r.track}","${r.title}","${r.keyword}","${r.type}","${r.intent}","${r.volume}","${r.linksTo}"\n`;
+    });
+    dl(csv, 'pillar-page-structure.csv', 'text/csv');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: REJECTED TABLE (Feature 5)
+// ═══════════════════════════════════════════════════════════════
+function renderRejected() {
+    if (!rejected.length) { document.getElementById('rejBody').innerHTML = `<tr><td colspan="5"><div class="empty">No rejected keywords.</div></td></tr>`; return; }
+    const sc = s => s >= 60 ? '#10b981' : s >= 40 ? '#f59e0b' : '#ef4444';
+    document.getElementById('rejBody').innerHTML = rejected.map((r, i) => `
+        <tr>
+            <td style="color:var(--muted);font-family:var(--mono);font-size:0.72rem">${i+1}</td>
+            <td class="kw-cell" style="color:var(--muted)">${escHtml(r.keyword)}</td>
+            <td><span class="reject-reason-label">${REJECTION_REASONS[r.rejectReason] || r.rejectReason}</span></td>
+            <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${r.score}%;background:${sc(r.score)}"></div></div><span class="score-num" style="color:${sc(r.score)}">${r.score}</span></div></td>
+            <td style="font-family:var(--mono);font-size:0.78rem;text-align:right">${r.volume ? r.volume.toLocaleString() : '—'}</td>
+        </tr>`).join('');
+}
+
+// ── RESULT TAB SWITCHING ─────────────────────────────────────
+function showResultTab(name, el) {
+    document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.result-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('rtab-' + name).classList.add('active');
+}
+
+// ── EXPORT: CURRENT VISIBLE TAB (filters curated table by activeTab) ──
+function exportCurrentTab() {
+    const rows = curated.filter(k => {
+        if (activeTab === 'all') return true;
+        if (activeTab === 'quickwins') return k.quickWin;
+        if (activeTab === 'page' || activeTab === 'blog') return k.ctype === activeTab;
+        return k.intent === activeTab;
+    });
+    const label = activeTab === 'all' ? 'all' : activeTab;
+    let csv = 'Keyword,Suggested Title,Intent,Content Type,SERP Features,KD Estimate,Volume,Quality Score,Opportunity Score,Word Count Target,Quick Win\n';
+    rows.forEach(r => { csv += `"${r.keyword}","${r.title}","${r.intent}","${r.ctype}","${r.serpFeatures.join('/')}","${diffLabel(r.diff).label}","${r.volume}","${r.score}","${r.opp||''}","${r.wordTarget||''}","${r.quickWin?'YES':''}"\n`; });
+    dl(csv, `curated-${label}.csv`, 'text/csv');
+}
+
+// ── EXPORT: QUICK WINS ONLY ────────────────────────────────────
+function exportQuickWinsCSV() {
+    const rows = curated.filter(k => k.quickWin);
+    if (!rows.length) { alert('No Quick Wins found. Try lowering the quality threshold or minimum volume.'); return; }
+    let csv = 'Keyword,Suggested Title,Intent,Content Type,KD Estimate,Volume,Opportunity Score,Word Count Target\n';
+    rows.forEach(r => { csv += `"${r.keyword}","${r.title}","${r.intent}","${r.ctype}","${diffLabel(r.diff).label}","${r.volume}","${r.opp||''}","${r.wordTarget||''}"\n`; });
+    dl(csv, 'quick-wins.csv', 'text/csv');
+}
+
+// ── EXPORT: REJECTED KEYWORDS ──────────────────────────────────
+function exportRejectedCSV() {
+    if (!rejected.length) { alert('No rejected keywords to export.'); return; }
+    let csv = 'Keyword,Rejection Reason,Quality Score,Volume\n';
+    rejected.forEach(r => { csv += `"${r.keyword}","${REJECTION_REASONS[r.rejectReason]||r.rejectReason}","${r.score}","${r.volume}"\n`; });
+    dl(csv, 'rejected-keywords.csv', 'text/csv');
+}
+
+// ── EXPORT: CURATED CSV ────────────────────────────────────────
+function exportCSV() {
+    curated.forEach(r => { csv += `"${r.keyword}","${r.title}","${r.intent}","${r.ctype}","${r.serpFeatures.join('/')}","${diffLabel(r.diff).label}","${r.volume}","${r.score}","${r.opp||''}","${r.wordTarget||''}","${r.quickWin?'YES':''}"\n`; });
+    dl(csv, 'curated-keywords.csv', 'text/csv');
+}
+
+function exportClusters() {
+    let csv = 'Cluster Topic,Keyword,Is Primary,Intent,Content Type,Volume,Quality Score,Cannibalization Risk\n';
+    clusters.forEach(c => {
+        c.keywords.forEach(kw => {
+            csv += `"${c.topic}","${kw.keyword}","${kw.isPrimary ? 'YES' : 'no'}","${kw.intent}","${kw.ctype}","${kw.volume}","${kw.score}","${c.hasCannibal ? 'YES' : 'no'}"\n`;
+        });
+    });
+    dl(csv, 'keyword-clusters.csv', 'text/csv');
+}
+
+function exportJSON() {
+    const out = {
+        exportDate: new Date().toISOString(),
+        summary: { total: curated.length, rejected: rejected.length, clusters: clusters.length, cannibalizationRisks: clusters.filter(c => c.hasCannibal).length },
+        curated: curated.map(k => ({ keyword: k.keyword, title: k.title, intent: k.intent, contentType: k.ctype, serpFeatures: k.serpFeatures, difficultyEstimate: diffLabel(k.diff).label, volume: k.volume, qualityScore: k.score, opportunityScore: k.opp, wordCountTarget: k.wordTarget, quickWin: k.quickWin })),
+        clusters: clusters.map(c => ({ topic: c.topic, cannibalizationRisk: c.hasCannibal, keywords: c.keywords.map(k => ({ keyword: k.keyword, isPrimary: k.isPrimary, intent: k.intent, ctype: k.ctype, volume: k.volume })) })),
+        rejected: rejected.map(k => ({ keyword: k.keyword, reason: REJECTION_REASONS[k.rejectReason] || k.rejectReason, score: k.score, volume: k.volume }))
+    };
+    dl(JSON.stringify(out, null, 2), 'keyword-report.json', 'application/json');
+}
+
+function exportText() {
+    const sep = '─'.repeat(60);
+    let t = `SEO KEYWORD CURATION REPORT v4\n${sep}\nGenerated: ${new Date().toLocaleString()}\nCurated: ${curated.length} | Rejected: ${rejected.length} | Clusters: ${clusters.length} | Quick Wins: ${curated.filter(k=>k.quickWin).length}\n\n`;
+    t += `CANNIBALIZATION RISKS: ${clusters.filter(c=>c.hasCannibal).length} cluster(s)\n${sep}\n`;
+    clusters.filter(c=>c.hasCannibal).forEach(c => { t += `• ${c.topic} → ${c.cannibalGroups.map(g=>g.map(k=>k.keyword).join(' vs ')).join('; ')}\n`; });
+    t += `\n⚡ QUICK WINS (publish these first)\n${sep}\n`;
+    curated.filter(k=>k.quickWin).forEach(k => { t += `• ${k.keyword} | KD: ${diffLabel(k.diff).label} | Vol: ${k.volume||'—'} | Opp: ${k.opp} | ${k.wordTarget}\n`; });
+    t += `\nTOPIC CLUSTERS\n${sep}\n`;
+    clusters.forEach(c => { t += `\n[${c.keywords.length} kw] ${c.topic}${c.hasCannibal?' ⚠ CANNIBAL':''}\n`; c.keywords.forEach(k => { t += `  ${k.isPrimary?'★':' '} ${k.keyword} (${k.intent}, ${k.ctype}, vol: ${k.volume||'—'})\n`; }); });
+    t += `\nCURATED KEYWORDS\n${sep}\n`;
+    ['transactional','commercial','informational','navigational'].forEach(intent => {
+        const g = curated.filter(k=>k.intent===intent);
+        if (!g.length) return;
+        t += `\n${intent.toUpperCase()} (${g.length})\n`;
+        g.forEach(k => { t += `• ${k.keyword}${k.quickWin?' ⚡':''}\n  Title: ${k.title}\n  Type: ${k.ctype.toUpperCase()} | SERP: ${k.serpFeatures.join(',')||'—'} | KD: ${diffLabel(k.diff).label} | Vol: ${k.volume||'N/A'} | Score: ${k.score} | Opp: ${k.opp||'—'} | ${k.wordTarget||'—'}\n\n`; });
+    });
+    t += `\nREJECTED KEYWORDS\n${sep}\n`;
+    rejected.forEach(k => { t += `✗ ${k.keyword} — ${REJECTION_REASONS[k.rejectReason]||k.rejectReason}\n`; });
+    dl(t, 'keyword-report.txt', 'text/plain');
+}
+
+function dl(content, name, type) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content],{type})); a.download = name; a.click();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function resetAll() {
+    allKw=[]; curated=[]; rejected=[]; clusters=[]; rawHeaders=[]; rawRows=[];
+    document.getElementById('fileStatus').classList.remove('show');
+    document.getElementById('colMapper').classList.remove('show');
+    document.getElementById('results').classList.remove('show');
+    document.getElementById('fileInput').value='';
+    document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));
+    selectedIntents.clear();
+}
+
+// ── EXPOSE TO GLOBAL SCOPE ────────────────────────────────────
+// All onclick="fn()" attributes in HTML need fn to be on window.
+// Functions defined inside DOMContentLoaded are closures, not global.
+Object.assign(window, {
+    run, resetAll, switchTab, showResultTab,
+    filterClusters, toggleCluster,
+    exportCSV, exportCurrentTab, exportQuickWinsCSV,
+    exportClusters, exportRejectedCSV,
+    exportJSON, exportText, exportPillarCSV
+});
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>
