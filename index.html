@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keyword Curator Pro v5.0 — Latest Edition (Advanced Segmentation)</title>
+    <title>Keyword Curator Pro v6.0 FINAL — Blog Briefs Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -192,6 +192,36 @@
         /* EMPTY STATE */
         .empty { padding: 3rem; text-align: center; color: var(--muted); font-family: var(--mono); font-size: 0.82rem; }
 
+        /* BLOG BRIEF CARDS */
+        .brief-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .brief-card-header { padding: 1.1rem 1.4rem; display: flex; align-items: flex-start; gap: 1rem; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(16,185,129,0.04); }
+        .brief-card-num { font-family: var(--mono); font-size: 0.65rem; color: var(--green); background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 4px; padding: 0.2rem 0.5rem; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+        .brief-card-title { font-size: 1rem; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 0.3rem; }
+        .brief-card-meta { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+        .brief-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+        .brief-section { padding: 1rem 1.4rem; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .brief-section:nth-child(even) { border-right: none; }
+        .brief-section:nth-last-child(-n+2) { border-bottom: none; }
+        .brief-section-full { padding: 1rem 1.4rem; border-bottom: 1px solid var(--border); grid-column: 1 / -1; }
+        .brief-section-full:last-child { border-bottom: none; }
+        .brief-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+        .brief-primary { font-family: var(--mono); font-size: 0.85rem; color: var(--green); background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.18); border-radius: 6px; padding: 0.5rem 0.8rem; display: inline-block; font-weight: 600; }
+        .brief-url { font-family: var(--mono); font-size: 0.78rem; color: var(--accent2); word-break: break-all; }
+        .brief-secondary-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .brief-secondary-tag { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); background: var(--surface3); border: 1px solid var(--border); border-radius: 20px; padding: 0.2rem 0.6rem; }
+        .brief-headings { display: flex; flex-direction: column; gap: 0.5rem; }
+        .brief-h-row { display: flex; align-items: flex-start; gap: 0.6rem; }
+        .brief-h-tag { font-family: var(--mono); font-size: 0.6rem; font-weight: 700; min-width: 26px; padding: 0.15rem 0.35rem; border-radius: 3px; text-align: center; flex-shrink: 0; margin-top: 1px; }
+        .brief-h1-tag { background: rgba(168,85,247,0.15); color: var(--purple); }
+        .brief-h2-tag { background: rgba(59,130,246,0.12); color: var(--accent); }
+        .brief-h3-tag { background: rgba(100,116,139,0.15); color: var(--muted); }
+        .brief-h-content { flex: 1; }
+        .brief-h-text { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
+        .brief-h-kw { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); margin-top: 0.15rem; }
+        .brief-word-target { font-family: var(--mono); font-size: 0.78rem; color: var(--amber); }
+        .brief-intent-badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: var(--mono); font-size: 0.65rem; font-weight: 600; }
+        @media (max-width: 700px) { .brief-body { grid-template-columns: 1fr; } .brief-section { border-right: none; } }
+
         /* LOADING */
         .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: rotate 0.7s linear infinite; vertical-align: middle; margin-right: 0.4rem; }
         @keyframes rotate { to { transform: rotate(360deg); } }
@@ -334,13 +364,13 @@
 
     <header>
         <div class="logo-block">
-            <h1>Keyword<span>Curator</span> Pro</h1>
-            <p>SEO Strategist-Grade Filtering Engine v4.0 — Smarter Engine</p>
+            <h1>Keyword<span>Curator</span> Pro <span style="font-size:1rem;font-weight:600;opacity:0.8">v6.0 FINAL</span></h1>
+            <p>BLOG BRIEFS EDITION — H1 / H2 / H3 STRUCTURE GENERATOR</p>
         </div>
         <div class="header-badges">
-            <span class="hbadge hbadge-green">✦ SMARTER ENGINE v4</span>
-            <span class="hbadge hbadge-blue">⚡ QUICK WINS DETECTOR</span>
-            <span class="hbadge hbadge-purple">🗂 ENTITY CLUSTERING</span>
+            <span class="hbadge hbadge-green">✦ v6.0 FINAL BUILD</span>
+            <span class="hbadge hbadge-blue">✍ BLOG BRIEFS TAB</span>
+            <span class="hbadge hbadge-purple">🗂 H1/H2/H3 AUTO-STRUCTURE</span>
         </div>
     </header>
 
@@ -425,6 +455,7 @@
         <!-- RESULT TAB NAVIGATION -->
         <div class="rtabs-nav" id="resultTabsNav">
             <button class="rtab active"         onclick="showResultTab('clusters',this)">🗂 Clusters</button>
+            <button class="rtab" style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.35);color:#10b981;font-weight:700" onclick="showResultTab('briefs',this)">✍ Blog Briefs</button>
             <button class="rtab rtab-purple"    onclick="showResultTab('pillar',this)">🏛 Pillar Plan</button>
             <button class="rtab"                onclick="showResultTab('curated',this)">✅ Curated Keywords</button>
             <button class="rtab rtab-red"       onclick="showResultTab('rejected',this)">❌ Rejected</button>
@@ -495,6 +526,22 @@
             </div>
         </div>
 
+        <!-- TAB: BLOG BRIEFS -->
+        <div class="result-panel" id="rtab-briefs">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">📝 Blog Briefs — Ready to Write</div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                        <button class="btn-dl btn-dl-green" onclick="exportBlogBriefs()">⬇ Download Blog Briefs CSV</button>
+                    </div>
+                </div>
+                <div class="tip-box" style="margin-bottom:1.25rem">
+                    <strong>How to use this:</strong> Each card below = one blog post. The <strong>Primary Keyword</strong> goes in your title, URL, first paragraph, and meta description. Each <strong>H2 heading</strong> is a section of your blog — write 150–300 words under each heading. Secondary keywords should appear naturally in those sections.
+                </div>
+                <div id="blogBriefsGrid" style="display:flex;flex-direction:column;gap:1.5rem;"></div>
+            </div>
+        </div>
+
         <!-- TAB: CURATED KEYWORDS -->
         <div class="result-panel" id="rtab-curated">
             <div class="panel">
@@ -552,6 +599,12 @@
             <div class="panel">
                 <div class="panel-title">Export Results</div>
                 <div class="export-grid">
+                    <div class="export-card">
+                        <div class="export-card-icon">✍️</div>
+                        <div class="export-card-title">Blog Briefs</div>
+                        <div class="export-card-desc">One row per blog post — title, primary keyword, URL slug, all H2/H3 headings, secondary keywords, word count target.</div>
+                        <button class="btn-dl btn-dl-green" onclick="exportBlogBriefs()">⬇ Download CSV</button>
+                    </div>
                     <div class="export-card">
                         <div class="export-card-icon">📊</div>
                         <div class="export-card-title">Curated Keywords</div>
@@ -1596,6 +1649,7 @@ function run() {
         activeTab = 'all';
         renderTable();
         renderClusters();
+        renderBlogBriefs();
         renderPillarStructure();
         renderRejected();
 
@@ -1604,11 +1658,12 @@ function run() {
         // Update result tab labels with counts
         const tabNav = document.getElementById('resultTabsNav');
         tabNav.children[0].textContent = `🗂 Clusters (${clusters.length})`;
-        tabNav.children[2].textContent = `✅ Curated (${curated.length})`;
-        tabNav.children[3].textContent = `❌ Rejected (${rejected.length})`;
+        tabNav.children[2].textContent = `🏛 Pillar Plan`;
+        tabNav.children[3].textContent = `✅ Curated (${curated.length})`;
+        tabNav.children[4].textContent = `❌ Rejected (${rejected.length})`;
 
-        // Auto-switch to clusters tab on fresh analysis
-        showResultTab('clusters', tabNav.children[0]);
+        // Auto-switch to Blog Briefs tab on fresh analysis
+        showResultTab('briefs', tabNav.children[1]);
 
         btn.innerHTML = '⚡ Analyze & Curate Keywords';
         btn.disabled = false;
@@ -2119,6 +2174,206 @@ function resetAll() {
     selectedIntents.clear();
 }
 
+// ═══════════════════════════════════════════════════════════════
+// BLOG BRIEF GENERATOR
+// ═══════════════════════════════════════════════════════════════
+
+function generateBlogHeadings(cluster) {
+    const primary = cluster.keywords.find(k => k.isPrimary) || cluster.keywords[0];
+    const secondaries = cluster.keywords.filter(k => !k.isPrimary);
+    const headings = [];
+
+    // H1 = suggested title of primary keyword
+    headings.push({ tag: 'H1', text: primary.title || primary.keyword, kw: primary.keyword });
+
+    // Group secondaries by semantic intent for smart H2 grouping
+    const howTo    = secondaries.filter(k => /^how (to|do|does|can)/i.test(k.keyword));
+    const whatIs   = secondaries.filter(k => /^what (is|are)/i.test(k.keyword));
+    const bestPrac = secondaries.filter(k => /best practice|tip|trick|strategy/i.test(k.keyword));
+    const examples = secondaries.filter(k => /example|sample|template/i.test(k.keyword));
+    const costKws  = secondaries.filter(k => /cost|price|pricing|fee|budget/i.test(k.keyword));
+    const toolKws  = secondaries.filter(k => /tool|software|app|platform/i.test(k.keyword));
+    const used     = new Set();
+
+    // Helper: add H2 for a group of keywords
+    function addGroup(kws, label, skipUsed) {
+        const fresh = skipUsed ? kws.filter(k => !used.has(k.keyword)) : kws;
+        if (!fresh.length) return;
+        // Use the highest-volume keyword as the H2 text
+        const lead = fresh.sort((a, b) => (b.volume||0) - (a.volume||0))[0];
+        const title = suggestTitle(lead.keyword, lead.intent);
+        // Convert to a clean section heading (strip year brackets, shorten)
+        const cleanTitle = title.replace(/\s*[\(\[]\d{4}[\)\]]/g, '').replace(/: Step-by-Step Guide$/,'').trim();
+        headings.push({ tag: 'H2', text: cleanTitle, kw: lead.keyword });
+        used.add(lead.keyword);
+        // Extra keywords in the group become H3s under this H2
+        fresh.slice(1, 3).forEach(k => {
+            used.add(k.keyword);
+            const h3title = suggestTitle(k.keyword, k.intent).replace(/\s*[\(\[]\d{4}[\)\]]/g,'').replace(/: Step-by-Step Guide$/,'').trim();
+            headings.push({ tag: 'H3', text: h3title, kw: k.keyword });
+        });
+    }
+
+    // Build intro H2 from "what is/are" keywords
+    addGroup(whatIs, 'what', true);
+
+    // Add how-to H2s
+    addGroup(howTo.slice(0,3), 'howto', true);
+
+    // Add examples section
+    addGroup(examples, 'examples', true);
+
+    // Add best practices
+    addGroup(bestPrac, 'bestprac', true);
+
+    // Add cost/pricing section
+    addGroup(costKws, 'cost', true);
+
+    // Add tools section
+    addGroup(toolKws, 'tools', true);
+
+    // Remaining secondaries that haven't been used yet — add as H2/H3
+    const remaining = secondaries.filter(k => !used.has(k.keyword));
+    remaining.slice(0, 4).forEach((k, i) => {
+        const h3title = suggestTitle(k.keyword, k.intent).replace(/\s*[\(\[]\d{4}[\)\]]/g,'').replace(/: Step-by-Step Guide$/,'').trim();
+        headings.push({ tag: i === 0 ? 'H2' : 'H3', text: h3title, kw: k.keyword });
+    });
+
+    // Always end with FAQ section if there are question-type secondaries
+    const hasQuestions = secondaries.some(k => /^(how|what|why|when|where|which)\b/i.test(k.keyword));
+    if (hasQuestions) {
+        headings.push({ tag: 'H2', text: 'Frequently Asked Questions', kw: '' });
+    }
+
+    return headings;
+}
+
+function slugify(str) {
+    return str.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 60);
+}
+
+function renderBlogBriefs() {
+    const grid = document.getElementById('blogBriefsGrid');
+    if (!grid) return;
+
+    // Only show blog clusters (ctype blog dominant), filter out tiny/noise clusters
+    const blogClusters = clusters.filter(c => {
+        if (!isMeaningfulCluster(c)) return false;
+        const blogCount = c.keywords.filter(k => k.ctype === 'blog' || k.ctype === 'guide').length;
+        return blogCount >= c.keywords.length / 2;
+    }).sort((a,b) => clusterTotalVol(b) - clusterTotalVol(a));
+
+    const intentColors = { transactional:'#10b981', commercial:'#f59e0b', informational:'#3b82f6', navigational:'#a855f7' };
+    const intentBg = { transactional:'rgba(16,185,129,0.1)', commercial:'rgba(245,158,11,0.1)', informational:'rgba(59,130,246,0.1)', navigational:'rgba(168,85,247,0.1)' };
+
+    if (!blogClusters.length) {
+        grid.innerHTML = `<div class="empty">No blog clusters found. Make sure you have informational keywords in your file.</div>`;
+        return;
+    }
+
+    grid.innerHTML = blogClusters.map((cluster, idx) => {
+        const primary = cluster.keywords.find(k => k.isPrimary) || cluster.keywords[0];
+        const secondaries = cluster.keywords.filter(k => !k.isPrimary);
+        const totalVol = clusterTotalVol(cluster);
+        const intent = clusterDominantIntent(cluster);
+        const headings = generateBlogHeadings(cluster);
+        const urlSlug = slugify(primary.keyword);
+        const iColor = intentColors[intent] || '#64748b';
+        const iBg = intentBg[intent] || 'rgba(100,116,139,0.1)';
+
+        const headingsHtml = headings.map(h => `
+            <div class="brief-h-row">
+                <span class="brief-h-tag ${h.tag==='H1'?'brief-h1-tag':h.tag==='H2'?'brief-h2-tag':'brief-h3-tag'}">${h.tag}</span>
+                <div class="brief-h-content">
+                    <div class="brief-h-text">${escHtml(h.text)}</div>
+                    ${h.kw && h.tag !== 'H1' ? `<div class="brief-h-kw">← targets: "${escHtml(h.kw)}"</div>` : ''}
+                </div>
+            </div>`).join('');
+
+        const secondaryTagsHtml = secondaries.slice(0,12).map(k =>
+            `<span class="brief-secondary-tag">${escHtml(k.keyword)}</span>`).join('') +
+            (secondaries.length > 12 ? `<span class="brief-secondary-tag">+${secondaries.length - 12} more</span>` : '');
+
+        return `
+        <div class="brief-card">
+            <div class="brief-card-header">
+                <div>
+                    <div class="brief-card-title">${escHtml(primary.title || primary.keyword)}</div>
+                    <div class="brief-card-meta">
+                        <span class="brief-intent-badge" style="background:${iBg};color:${iColor}">${intent}</span>
+                        &nbsp;·&nbsp; ${cluster.keywords.length} keywords &nbsp;·&nbsp; ${totalVol ? totalVol.toLocaleString() + ' total vol' : 'no vol data'}
+                        ${cluster.hasCannibal ? '&nbsp;·&nbsp; <span style="color:var(--red)">⚠ cannibal risk</span>' : ''}
+                    </div>
+                </div>
+                <span class="brief-card-num">Blog ${idx + 1} of ${blogClusters.length}</span>
+            </div>
+            <div class="brief-body">
+                <div class="brief-section">
+                    <div class="brief-label">🎯 Primary Keyword</div>
+                    <div class="brief-primary">${escHtml(primary.keyword)}</div>
+                    <div style="margin-top:0.5rem;font-family:var(--mono);font-size:0.68rem;color:var(--muted)">Use in: title · URL · first 100 words · meta description</div>
+                </div>
+                <div class="brief-section">
+                    <div class="brief-label">🔗 URL Slug</div>
+                    <div class="brief-url">yoursite.com/blog/<strong>${escHtml(urlSlug)}</strong></div>
+                    <div style="margin-top:0.5rem;font-family:var(--mono);font-size:0.68rem;color:var(--muted)">Keep short · no dates · primary keyword only</div>
+                </div>
+                <div class="brief-section">
+                    <div class="brief-label">📊 Target Word Count</div>
+                    <div class="brief-word-target">${primary.wordTarget || '1,200–2,000 words'}</div>
+                    <div style="margin-top:0.5rem;font-family:var(--mono);font-size:0.68rem;color:var(--muted)">Based on keyword intent + format</div>
+                </div>
+                <div class="brief-section">
+                    <div class="brief-label">🔑 Secondary Keywords</div>
+                    <div class="brief-secondary-list">${secondaryTagsHtml || '<span style="color:var(--muted);font-size:0.75rem">No secondaries — single keyword cluster</span>'}</div>
+                    <div style="margin-top:0.5rem;font-family:var(--mono);font-size:0.68rem;color:var(--muted)">Use as headings or naturally in paragraphs</div>
+                </div>
+                <div class="brief-section-full">
+                    <div class="brief-label">📄 Blog Structure — H1 · H2 · H3 Headings</div>
+                    <div class="brief-headings">${headingsHtml}</div>
+                </div>
+                ${cluster.hasCannibal ? `<div class="brief-section-full" style="background:rgba(239,68,68,0.04);border-top:1px solid rgba(239,68,68,0.15)">
+                    <div class="brief-label" style="color:var(--red)">⚠ Cannibalization Warning</div>
+                    <div style="font-family:var(--mono);font-size:0.75rem;color:#f87171;line-height:1.6">Keywords in this cluster are competing for the same Google ranking. Write them all in this ONE blog post — do NOT create separate posts for each keyword.</div>
+                </div>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function exportBlogBriefs() {
+    const blogClusters = clusters.filter(c => {
+        if (!isMeaningfulCluster(c)) return false;
+        const blogCount = c.keywords.filter(k => k.ctype === 'blog' || k.ctype === 'guide').length;
+        return blogCount >= c.keywords.length / 2;
+    }).sort((a,b) => clusterTotalVol(b) - clusterTotalVol(a));
+
+    if (!blogClusters.length) { alert('No blog clusters found.'); return; }
+
+    let csv = 'Blog #,Blog Title (H1),Primary Keyword,URL Slug,Word Count Target,Intent,Total Volume,Secondary Keywords,H2 Headings,H3 Headings,Cannibalization Risk\n';
+
+    blogClusters.forEach((cluster, idx) => {
+        const primary = cluster.keywords.find(k => k.isPrimary) || cluster.keywords[0];
+        const secondaries = cluster.keywords.filter(k => !k.isPrimary);
+        const headings = generateBlogHeadings(cluster);
+        const h2s = headings.filter(h => h.tag === 'H2').map(h => h.text).join(' | ');
+        const h3s = headings.filter(h => h.tag === 'H3').map(h => h.text).join(' | ');
+        const secondaryList = secondaries.map(k => k.keyword).join(' | ');
+        const totalVol = clusterTotalVol(cluster);
+        const intent = clusterDominantIntent(cluster);
+        const urlSlug = slugify(primary.keyword);
+
+        csv += `"${idx+1}","${(primary.title||primary.keyword).replace(/"/g,'""')}","${primary.keyword.replace(/"/g,'""')}","yoursite.com/blog/${urlSlug}","${primary.wordTarget||'1,200-2,000 words'}","${intent}","${totalVol}","${secondaryList.replace(/"/g,'""')}","${h2s.replace(/"/g,'""')}","${h3s.replace(/"/g,'""')}","${cluster.hasCannibal?'YES - keep in ONE post':'No'}"\n`;
+    });
+
+    dl(csv, 'blog-briefs.csv', 'text/csv');
+}
+
 // ── EXPOSE TO GLOBAL SCOPE ────────────────────────────────────
 // All onclick="fn()" attributes in HTML need fn to be on window.
 // Functions defined inside DOMContentLoaded are closures, not global.
@@ -2127,7 +2382,8 @@ Object.assign(window, {
     filterClusters, toggleCluster,
     exportCSV, exportCurrentTab, exportQuickWinsCSV,
     exportClusters, exportRejectedCSV,
-    exportJSON, exportText, exportPillarCSV
+    exportJSON, exportText, exportPillarCSV,
+    exportBlogBriefs
 });
 
 }); // end DOMContentLoaded
