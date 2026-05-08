@@ -3,166 +3,118 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Keyword Sorter — FINAL v1</title>
+<title>SEO Keyword Sorter — FINAL v2</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f;
-  --card: #111118;
-  --border: rgba(255,255,255,0.07);
-  --text: #e8e8f0;
-  --muted: #5a5a78;
-  --green: #00e5a0;
-  --blue: #4d9fff;
-  --amber: #ffb547;
-  --red: #ff5e5e;
-  --purple: #a78bfa;
-  --mono: 'DM Mono', monospace;
-  --sans: 'Cabinet Grotesk', sans-serif;
+  --bg:#0a0a0f;--card:#111118;--border:rgba(255,255,255,0.07);
+  --text:#e8e8f0;--muted:#5a5a78;--green:#00e5a0;--blue:#4d9fff;
+  --amber:#ffb547;--red:#ff5e5e;--mono:'DM Mono',monospace;--sans:'Cabinet Grotesk',sans-serif;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:var(--sans); background:var(--bg); color:var(--text); min-height:100vh; }
-
-/* grid bg */
-body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background-image: radial-gradient(circle at 20% 20%, rgba(0,229,160,0.04) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 80%, rgba(77,159,255,0.04) 0%, transparent 50%);
-}
-
-.wrap { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:2.5rem 1.5rem; }
-
-/* HEADER */
-header { text-align:center; margin-bottom:3rem; }
-header h1 { font-size:2.2rem; font-weight:800; letter-spacing:-0.03em; color:#fff; margin-bottom:0.4rem; }
-header h1 span { color:var(--green); }
-header p { font-family:var(--mono); font-size:0.75rem; color:var(--muted); letter-spacing:0.06em; }
-.version-badge {
-  display:inline-block; margin-top:0.75rem;
-  font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em;
-  padding:0.3rem 0.8rem; border-radius:4px;
-  background:rgba(0,229,160,0.08); border:1px solid rgba(0,229,160,0.2); color:var(--green);
-}
-
-/* CARD */
-.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.75rem; margin-bottom:1.25rem; }
-.card-label { font-family:var(--mono); font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
-.card-label::before { content:''; display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--green); }
-
-/* UPLOAD */
-.upload-zone {
-  border:1.5px dashed rgba(0,229,160,0.25); border-radius:8px;
-  padding:2.5rem; text-align:center; cursor:pointer;
-  transition:all 0.2s; background:rgba(0,229,160,0.02);
-}
-.upload-zone:hover, .upload-zone.over { border-color:var(--green); background:rgba(0,229,160,0.06); }
-.upload-zone .icon { font-size:2.2rem; margin-bottom:0.6rem; display:block; }
-.upload-zone h3 { font-size:1rem; font-weight:700; margin-bottom:0.3rem; }
-.upload-zone p { font-family:var(--mono); font-size:0.72rem; color:var(--muted); }
-#fi { display:none; }
-.file-ok { display:none; margin-top:0.75rem; font-family:var(--mono); font-size:0.78rem; color:var(--green); padding:0.6rem 0.9rem; background:rgba(0,229,160,0.07); border:1px solid rgba(0,229,160,0.18); border-radius:6px; }
-.file-ok.show { display:block; }
-
-/* COL MAPPER */
-.col-row { display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.75rem; }
-.col-field { display:flex; flex-direction:column; gap:0.35rem; }
-.col-field label { font-family:var(--mono); font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
-.col-field select { background:#1a1a26; border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:var(--mono); font-size:0.8rem; padding:0.45rem 0.7rem; outline:none; cursor:pointer; }
-.col-field select:focus { border-color:var(--green); }
-
-/* RUN BTN */
-.run-btn {
-  width:100%; padding:0.9rem; border:none; border-radius:8px; cursor:pointer;
-  font-family:var(--sans); font-weight:800; font-size:1rem; letter-spacing:0.01em;
-  background:linear-gradient(135deg, #00e5a0, #00b87a);
-  color:#0a0a0f; transition:all 0.2s; margin-top:0.5rem;
-}
-.run-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,229,160,0.25); }
-.run-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
-.spin { display:inline-block; width:14px; height:14px; border:2px solid rgba(0,0,0,0.2); border-top-color:#000; border-radius:50%; animation:spin 0.6s linear infinite; vertical-align:middle; margin-right:0.4rem; }
-@keyframes spin { to { transform:rotate(360deg); } }
-
-/* RESULTS */
-#results { display:none; }
-#results.show { display:block; }
-
-/* SUMMARY PILLS */
-.summary { display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem; }
-.sum-pill { padding:0.6rem 1.1rem; border-radius:8px; font-family:var(--mono); font-size:0.8rem; font-weight:500; border:1px solid; }
-.sum-blog { background:rgba(77,159,255,0.08); border-color:rgba(77,159,255,0.2); color:var(--blue); }
-.sum-service { background:rgba(0,229,160,0.08); border-color:rgba(0,229,160,0.2); color:var(--green); }
-.sum-ignored { background:rgba(90,90,120,0.12); border-color:rgba(90,90,120,0.2); color:var(--muted); }
-.sum-n { font-size:1.3rem; font-weight:800; display:block; margin-bottom:0.1rem; }
-
-/* OUTPUT SECTIONS */
-.out-section { margin-bottom:2rem; }
-.out-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem; }
-.out-title { font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:0.6rem; }
-.out-title .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-.dot-blog { background:var(--blue); }
-.dot-service { background:var(--green); }
-.dl-btn {
-  font-family:var(--mono); font-size:0.72rem; font-weight:500;
-  padding:0.45rem 1rem; border-radius:6px; border:1px solid; cursor:pointer;
-  transition:all 0.2s; text-decoration:none; display:inline-block;
-}
-.dl-blog { background:rgba(77,159,255,0.08); border-color:rgba(77,159,255,0.25); color:var(--blue); }
-.dl-blog:hover { background:rgba(77,159,255,0.18); }
-.dl-service { background:rgba(0,229,160,0.08); border-color:rgba(0,229,160,0.25); color:var(--green); }
-.dl-service:hover { background:rgba(0,229,160,0.18); }
-
-/* CLUSTER TABLE */
-.cluster-list { display:flex; flex-direction:column; gap:0.75rem; }
-.cluster-row {
-  background:var(--card); border:1px solid var(--border); border-radius:8px;
-  padding:1rem 1.2rem; display:grid;
-  grid-template-columns: 1fr auto;
-  gap:0.5rem; align-items:start;
-}
-.cluster-row:hover { border-color:rgba(255,255,255,0.12); }
-.cluster-primary { font-family:var(--mono); font-size:0.82rem; font-weight:500; color:#fff; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem; }
-.primary-badge { font-size:0.6rem; padding:0.15rem 0.45rem; border-radius:3px; font-weight:500; }
-.pb-blog { background:rgba(77,159,255,0.12); color:var(--blue); }
-.pb-service { background:rgba(0,229,160,0.1); color:var(--green); }
-.cluster-title { font-size:0.88rem; color:var(--text); margin-bottom:0.4rem; line-height:1.4; font-weight:500; }
-.cluster-url { font-family:var(--mono); font-size:0.68rem; color:var(--muted); margin-bottom:0.6rem; }
-.cluster-secondary { display:flex; flex-wrap:wrap; gap:0.35rem; }
-.sec-tag { font-family:var(--mono); font-size:0.65rem; color:var(--muted); background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:20px; padding:0.18rem 0.55rem; }
-.cluster-vol { font-family:var(--mono); font-size:0.72rem; color:var(--muted); text-align:right; white-space:nowrap; }
-.cluster-vol strong { display:block; font-size:1rem; color:var(--text); }
-
-/* EMPTY */
-.empty-state { padding:2rem; text-align:center; font-family:var(--mono); font-size:0.78rem; color:var(--muted); background:rgba(255,255,255,0.02); border-radius:8px; border:1px dashed var(--border); }
-
-/* WHAT THIS DOES box */
-.how-box { background:rgba(77,159,255,0.04); border:1px solid rgba(77,159,255,0.12); border-left:3px solid var(--blue); border-radius:6px; padding:1rem 1.2rem; font-family:var(--mono); font-size:0.74rem; color:var(--muted); line-height:1.8; }
-.how-box strong { color:var(--blue); }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(circle at 20% 20%,rgba(0,229,160,0.04) 0%,transparent 50%),
+             radial-gradient(circle at 80% 80%,rgba(77,159,255,0.04) 0%,transparent 50%);}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2.5rem 1.5rem;}
+header{text-align:center;margin-bottom:2.5rem;}
+header h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.03em;color:#fff;margin-bottom:0.4rem;}
+header h1 span{color:var(--green);}
+header p{font-family:var(--mono);font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;}
+.version{display:inline-block;margin-top:0.75rem;font-family:var(--mono);font-size:0.65rem;
+  letter-spacing:0.1em;padding:0.3rem 0.8rem;border-radius:4px;
+  background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2);color:var(--green);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:1.25rem;}
+.clabel{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.clabel::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);}
+.upload-zone{border:1.5px dashed rgba(0,229,160,0.25);border-radius:8px;padding:2.5rem;
+  text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(0,229,160,0.02);}
+.upload-zone:hover,.upload-zone.over{border-color:var(--green);background:rgba(0,229,160,0.06);}
+.upload-zone .icon{font-size:2.2rem;margin-bottom:0.6rem;display:block;}
+.upload-zone h3{font-size:1rem;font-weight:700;margin-bottom:0.3rem;}
+.upload-zone p{font-family:var(--mono);font-size:0.72rem;color:var(--muted);}
+#fi{display:none;}
+.file-ok{display:none;margin-top:0.75rem;font-family:var(--mono);font-size:0.78rem;color:var(--green);
+  padding:0.6rem 0.9rem;background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:6px;}
+.file-ok.show{display:block;}
+.col-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;}
+.col-field{display:flex;flex-direction:column;gap:0.35rem;}
+.col-field label{font-family:var(--mono);font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.col-field select{background:#1a1a26;border:1px solid var(--border);border-radius:6px;color:var(--text);
+  font-family:var(--mono);font-size:0.8rem;padding:0.45rem 0.7rem;outline:none;cursor:pointer;}
+.col-field select:focus{border-color:var(--green);}
+.run-btn{width:100%;padding:0.9rem;border:none;border-radius:8px;cursor:pointer;
+  font-family:var(--sans);font-weight:800;font-size:1rem;
+  background:linear-gradient(135deg,#00e5a0,#00b87a);color:#0a0a0f;
+  transition:all 0.2s;margin-top:0.5rem;}
+.run-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,160,0.25);}
+.run-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+#results{display:none;}
+#results.show{display:block;}
+.summary{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.sum-pill{padding:0.6rem 1.1rem;border-radius:8px;font-family:var(--mono);font-size:0.8rem;font-weight:500;border:1px solid;}
+.sum-blog{background:rgba(77,159,255,0.08);border-color:rgba(77,159,255,0.2);color:var(--blue);}
+.sum-service{background:rgba(0,229,160,0.08);border-color:rgba(0,229,160,0.2);color:var(--green);}
+.sum-ignored{background:rgba(255,94,94,0.08);border-color:rgba(255,94,94,0.2);color:var(--red);}
+.sum-n{font-size:1.3rem;font-weight:800;display:block;margin-bottom:0.1rem;}
+.out-section{margin-bottom:2rem;}
+.out-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;}
+.out-title{font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:0.6rem;}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-blog{background:var(--blue);}
+.dot-service{background:var(--green);}
+.dl-btn{font-family:var(--mono);font-size:0.72rem;font-weight:500;padding:0.45rem 1rem;
+  border-radius:6px;border:1px solid;cursor:pointer;transition:all 0.2s;}
+.dl-blog{background:rgba(77,159,255,0.08);border-color:rgba(77,159,255,0.25);color:var(--blue);}
+.dl-blog:hover{background:rgba(77,159,255,0.18);}
+.dl-service{background:rgba(0,229,160,0.08);border-color:rgba(0,229,160,0.25);color:var(--green);}
+.dl-service:hover{background:rgba(0,229,160,0.18);}
+.cluster-list{display:flex;flex-direction:column;gap:0.75rem;}
+.cluster-row{background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:1rem 1.2rem;display:grid;grid-template-columns:1fr auto;gap:0.5rem;align-items:start;}
+.cluster-row:hover{border-color:rgba(255,255,255,0.12);}
+.cluster-primary{font-family:var(--mono);font-size:0.82rem;font-weight:500;color:#fff;
+  margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;}
+.pbadge{font-size:0.6rem;padding:0.15rem 0.45rem;border-radius:3px;font-weight:500;}
+.pb-blog{background:rgba(77,159,255,0.12);color:var(--blue);}
+.pb-service{background:rgba(0,229,160,0.1);color:var(--green);}
+.cluster-title{font-size:0.88rem;color:var(--text);margin-bottom:0.4rem;line-height:1.4;font-weight:500;}
+.cluster-url{font-family:var(--mono);font-size:0.68rem;color:var(--muted);margin-bottom:0.6rem;}
+.cluster-secondary{display:flex;flex-wrap:wrap;gap:0.35rem;}
+.sec-tag{font-family:var(--mono);font-size:0.65rem;color:var(--muted);background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:20px;padding:0.18rem 0.55rem;}
+.cluster-vol{font-family:var(--mono);font-size:0.72rem;color:var(--muted);text-align:right;white-space:nowrap;}
+.cluster-vol strong{display:block;font-size:1rem;color:var(--text);}
+.empty-state{padding:2rem;text-align:center;font-family:var(--mono);font-size:0.78rem;color:var(--muted);
+  background:rgba(255,255,255,0.02);border-radius:8px;border:1px dashed var(--border);}
+.how-box{background:rgba(77,159,255,0.04);border:1px solid rgba(77,159,255,0.12);
+  border-left:3px solid var(--blue);border-radius:6px;padding:1rem 1.2rem;
+  font-family:var(--mono);font-size:0.74rem;color:var(--muted);line-height:1.9;}
+.how-box strong{color:var(--blue);}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <header>
     <h1>SEO Keyword <span>Sorter</span></h1>
     <p>UPLOAD YOUR KEYWORD SHEET — GET TWO CLEAN OUTPUTS</p>
-    <span class="version-badge">✦ FINAL v1 — BLOG SHEET + SERVICE PAGE SHEET</span>
+    <span class="version">✦ FINAL v2 — BLOGS SHEET + SERVICE PAGES SHEET</span>
   </header>
 
-  <!-- WHAT THIS DOES -->
-  <div class="card" style="margin-bottom:1.25rem">
-    <div class="card-label">What this tool does</div>
+  <div class="card">
+    <div class="clabel">What this tool does</div>
     <div class="how-box">
-      <strong>Step 1</strong> — You upload a keyword CSV/Excel sheet (from Ahrefs, SEMrush, GSC, Keyword Planner, etc.)<br>
-      <strong>Step 2</strong> — Tool removes duplicates, junk, and irrelevant keywords automatically<br>
-      <strong>Step 3</strong> — Every keyword is sorted: <strong style="color:var(--blue)">Blog</strong> or <strong style="color:var(--green)">Service Page</strong><br>
-      <strong>Step 4</strong> — Similar keywords are grouped together → one primary keyword + related secondary keywords<br>
-      <strong>Step 5</strong> — You download <strong style="color:var(--blue)">BLOGS-FINAL.csv</strong> and <strong style="color:var(--green)">SERVICE-PAGES-FINAL.csv</strong> — ready to use
+      <strong>Input</strong> — Your raw keyword CSV/Excel from Ahrefs, SEMrush, GSC, Keyword Planner<br>
+      <strong>Step 1</strong> — Removes all junk: URLs, typos, site: queries, duplicates, irrelevant garbage<br>
+      <strong>Step 2</strong> — Every clean keyword sorted into: <strong style="color:var(--blue)">Blog</strong> or <strong style="color:var(--green)">Service Page</strong><br>
+      <strong>Step 3</strong> — Similar keywords grouped → one Primary keyword + related Secondary keywords<br>
+      <strong>Output</strong> — Download <strong style="color:var(--blue)">BLOGS-FINAL.csv</strong> and <strong style="color:var(--green)">SERVICE-PAGES-FINAL.csv</strong>
     </div>
   </div>
 
-  <!-- UPLOAD -->
   <div class="card">
-    <div class="card-label">01 — Upload your keyword sheet</div>
+    <div class="clabel">01 — Upload your keyword sheet</div>
     <div class="upload-zone" id="zone">
       <span class="icon">📂</span>
       <h3>Drop your file here or click to browse</h3>
@@ -170,414 +122,387 @@ header p { font-family:var(--mono); font-size:0.75rem; color:var(--muted); lette
     </div>
     <input type="file" id="fi" accept=".csv,.xlsx,.xls">
     <div class="file-ok" id="fileOk"></div>
-
-    <!-- COL MAPPER — shown after upload -->
-    <div id="colMapper" style="display:none; margin-top:1rem; padding:1rem; background:rgba(255,183,71,0.04); border:1px solid rgba(255,183,71,0.15); border-radius:8px;">
+    <div id="colMapper" style="display:none;margin-top:1rem;padding:1rem;background:rgba(255,183,71,0.04);border:1px solid rgba(255,183,71,0.15);border-radius:8px;">
       <div style="font-family:var(--mono);font-size:0.65rem;color:var(--amber);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Confirm columns</div>
       <div class="col-row">
-        <div class="col-field">
-          <label>Keyword column</label>
-          <select id="kwCol"></select>
-        </div>
-        <div class="col-field">
-          <label>Volume column (optional)</label>
-          <select id="volCol"></select>
-        </div>
+        <div class="col-field"><label>Keyword column</label><select id="kwCol"></select></div>
+        <div class="col-field"><label>Volume column (optional)</label><select id="volCol"></select></div>
       </div>
     </div>
   </div>
 
-  <!-- RUN -->
   <button class="run-btn" id="runBtn" onclick="run()" disabled>Sort My Keywords →</button>
 
-  <!-- RESULTS -->
   <div id="results">
-
-    <!-- SUMMARY -->
     <div class="card" style="margin-top:1.5rem;">
-      <div class="card-label">02 — Results</div>
+      <div class="clabel">02 — Results</div>
       <div class="summary" id="summary"></div>
     </div>
-
-    <!-- BLOGS -->
-    <div class="out-section" id="blogSection">
+    <div class="out-section">
       <div class="out-header">
-        <div class="out-title"><span class="dot dot-blog"></span> Blog Posts</div>
+        <div class="out-title"><span class="dot dot-blog"></span>Blog Posts</div>
         <button class="dl-btn dl-blog" onclick="downloadBlogs()">⬇ Download BLOGS-FINAL.csv</button>
       </div>
       <div class="cluster-list" id="blogList"></div>
     </div>
-
-    <!-- SERVICE PAGES -->
-    <div class="out-section" id="serviceSection">
+    <div class="out-section">
       <div class="out-header">
-        <div class="out-title"><span class="dot dot-service"></span> Service Pages</div>
+        <div class="out-title"><span class="dot dot-service"></span>Service Pages</div>
         <button class="dl-btn dl-service" onclick="downloadService()">⬇ Download SERVICE-PAGES-FINAL.csv</button>
       </div>
       <div class="cluster-list" id="serviceList"></div>
     </div>
-
-  </div><!-- /results -->
-
-</div><!-- /wrap -->
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
 <script>
-// ─────────────────────────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────────────────────────
-let rawHeaders = [];
-let rawRows = [];
-let blogClusters = [];
-let serviceClusters = [];
+let rawHeaders=[], rawRows=[], blogClusters=[], serviceClusters=[];
 
-// ─────────────────────────────────────────────────────────────────
-// UPLOAD
-// ─────────────────────────────────────────────────────────────────
-const zone = document.getElementById('zone');
-const fi   = document.getElementById('fi');
+// ── UPLOAD ──────────────────────────────────────────────────────
+const zone=document.getElementById('zone'), fi=document.getElementById('fi');
+zone.addEventListener('click',()=>fi.click());
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
+fi.addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0]);});
 
-zone.addEventListener('click', () => fi.click());
-zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
-zone.addEventListener('dragleave', () => zone.classList.remove('over'));
-zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
-fi.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
-
-function loadFile(f) {
-  const ext = f.name.split('.').pop().toLowerCase();
-  if (ext === 'csv') {
-    const r = new FileReader();
-    r.onload = e => parseCSV(e.target.result, f.name);
-    r.readAsText(f);
-  } else if (['xlsx','xls'].includes(ext)) {
-    const r = new FileReader();
-    r.onload = e => parseXLSX(e.target.result, f.name);
-    r.readAsArrayBuffer(f);
-  } else {
-    alert('Please upload a CSV or Excel file.');
-  }
+function loadFile(f){
+  const ext=f.name.split('.').pop().toLowerCase();
+  if(ext==='csv'){const r=new FileReader();r.onload=e=>parseCSV(e.target.result,f.name);r.readAsText(f);}
+  else if(['xlsx','xls'].includes(ext)){const r=new FileReader();r.onload=e=>parseXLSX(e.target.result,f.name);r.readAsArrayBuffer(f);}
+  else alert('Please upload CSV or Excel.');
 }
-
-function parseCSV(text, name) {
-  const lines = text.trim().split('\n').filter(l => l.trim());
-  if (!lines.length) return;
-  const sep = lines[0].includes('\t') ? '\t' : ',';
-  rawHeaders = lines[0].split(sep).map(h => h.trim().replace(/^["']|["']$/g,''));
-  rawRows = lines.slice(1).map(l => l.split(sep).map(c => c.trim().replace(/^["']|["']$/g,'')));
+function parseCSV(text,name){
+  const lines=text.trim().split('\n').filter(l=>l.trim());
+  if(!lines.length)return;
+  const sep=lines[0].includes('\t')?'\t':',';
+  rawHeaders=lines[0].split(sep).map(h=>h.trim().replace(/^["']|["']$/g,''));
+  rawRows=lines.slice(1).map(l=>l.split(sep).map(c=>c.trim().replace(/^["']|["']$/g,'')));
   setupMapper(name);
 }
-
-function parseXLSX(buf, name) {
-  const wb = XLSX.read(buf, { type:'array' });
-  const ws = wb.Sheets[wb.SheetNames[0]];
-  const data = XLSX.utils.sheet_to_json(ws, { header:1 });
-  rawHeaders = (data[0]||[]).map(h => String(h||'').trim());
-  rawRows = data.slice(1).filter(r=>r[0]).map(r => r.map(c => String(c||'').trim()));
+function parseXLSX(buf,name){
+  const wb=XLSX.read(buf,{type:'array'});
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const data=XLSX.utils.sheet_to_json(ws,{header:1});
+  rawHeaders=(data[0]||[]).map(h=>String(h||'').trim());
+  rawRows=data.slice(1).filter(r=>r[0]).map(r=>r.map(c=>String(c||'').trim()));
   setupMapper(name);
 }
-
-function setupMapper(name) {
-  // Auto-detect keyword and volume columns
-  const kwIdx  = rawHeaders.findIndex(h => /keyword|query|term|kw/i.test(h)) !== -1
-                  ? rawHeaders.findIndex(h => /keyword|query|term|kw/i.test(h)) : 0;
-  const volIdx = rawHeaders.findIndex(h => /volume|vol|search|monthly|avg/i.test(h));
-
-  const kwSel  = document.getElementById('kwCol');
-  const volSel = document.getElementById('volCol');
-
-  kwSel.innerHTML  = rawHeaders.map((h,i) => `<option value="${i}" ${i===kwIdx?'selected':''}>${h||'Column '+(i+1)}</option>`).join('');
-  volSel.innerHTML = `<option value="-1">— None —</option>` + rawHeaders.map((h,i) => `<option value="${i}" ${i===volIdx?'selected':''}>${h||'Column '+(i+1)}</option>`).join('');
-
-  document.getElementById('colMapper').style.display = 'block';
-  document.getElementById('fileOk').textContent = `✅ ${name} — ${rawRows.length.toLocaleString()} keywords loaded`;
+function setupMapper(name){
+  const kwIdx=rawHeaders.findIndex(h=>/keyword|query|term|kw/i.test(h));
+  const volIdx=rawHeaders.findIndex(h=>/volume|vol|search|monthly|avg/i.test(h));
+  const ki=kwIdx>=0?kwIdx:0, vi=volIdx>=0?volIdx:-1;
+  document.getElementById('kwCol').innerHTML=rawHeaders.map((h,i)=>`<option value="${i}"${i===ki?' selected':''}>${h||'Col '+(i+1)}</option>`).join('');
+  document.getElementById('volCol').innerHTML=`<option value="-1">— None —</option>`+rawHeaders.map((h,i)=>`<option value="${i}"${i===vi?' selected':''}>${h||'Col '+(i+1)}</option>`).join('');
+  document.getElementById('colMapper').style.display='block';
+  document.getElementById('fileOk').textContent=`✅ ${name} — ${rawRows.length.toLocaleString()} rows loaded`;
   document.getElementById('fileOk').classList.add('show');
-  document.getElementById('runBtn').disabled = false;
+  document.getElementById('runBtn').disabled=false;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// KEYWORD INTENT — BLOG or SERVICE PAGE
-// Simple, clear, like a real SEO person would do it
-// ─────────────────────────────────────────────────────────────────
+// ── STEP 1: JUNK REMOVAL ────────────────────────────────────────
+// Remove URLs, site: queries, gibberish, typos — anything
+// that should never be a keyword on any website
+function isJunk(kw){
+  const k=kw.trim();
+  if(!k||k.length<4) return true;
+  // HTTP/HTTPS URLs
+  if(/^https?:\/\//i.test(k)) return true;
+  // www. domains
+  if(/^www\./i.test(k)) return true;
+  // site: search operator
+  if(/^site:/i.test(k)) return true;
+  // Contains linkedin.com/ (profile URLs, pulse URLs)
+  if(/linkedin\.com\//i.test(k)) return true;
+  // Contains "site linkedin.com" or "site www.linkedin.com"
+  if(/site\s+(www\.)?linkedin\.com/i.test(k)) return true;
+  // Any URL-like pattern: something.com something.net etc as primary topic
+  if(/\.(com|org|net|io|html|php|aspx)\b/i.test(k)) return true;
+  // Infusionsoft, thinkific, specific course platform URLs disguised as keywords
+  if(/thinkific|infusionsoft|thelinkedcoach\.com|jake-jorgovan|inc\.com/i.test(k)) return true;
+  // mc_cid, mc_eid — email campaign tracking params
+  if(/mc_cid|mc_eid|uniqid/i.test(k)) return true;
+  // Obvious typos
+  if(/\bplaxe\b|\bleada\b|\bgenration\b|\bgenaration\b|\bautomted\b/i.test(k)) return true;
+  // Download/crack/piracy
+  if(/\b(pdf download|crack|nulled|torrent|warez|nitroflare|rapidshare|blackhat)\b/i.test(k)) return true;
+  // Looks like a full URL path without http (e.g. "fl249.infusionsoft.com app orderforms")
+  if(/^[a-z0-9\-]+\.[a-z]{2,6}\s+[a-z]/i.test(k)&&!/^linkedin\s/i.test(k)) return true;
+  // LinkedIn profile paths like "linkedin.com/in kenneth galbraith"
+  if(/linkedin\.com\/in/i.test(k)) return true;
+  // Mars rover, specific random person profiles — very specific one-off navigational junk
+  if(/mars rover|manipulators team leader mars/i.test(k)) return true;
+  return false;
+}
 
-// These words = SERVICE PAGE (someone wants to hire / buy)
-const SERVICE_WORDS = [
-  'agency','agencies','company','companies','services','service',
-  'consultant','consulting','expert','experts','hire','outsource',
-  'pricing','price','cost','fee','package','quote','near me',
-  'provider','providers','firm','solution','solutions','partner',
-  'managed','white label','done for you'
+// ── STEP 2: CLASSIFY — Blog or Service Page? ────────────────────
+// Blog = person wants to LEARN something
+// Service = person wants to HIRE, BUY, or PAY for something
+
+// These words always mean BLOG (informational intent)
+const BLOG_SIGNALS=[
+  'how to ','how do ','how does ','how can ','how will ',
+  'what is ','what are ','what does ','why is ','why does ','why are ',
+  'when to ','where to ','which is ',
+  ' guide',' tutorial',' tips ',' tip ',' checklist',
+  ' examples',' example',' strategy',' strategies',
+  ' vs ',' versus ',' alternative',' explained',' definition',
+  ' meaning',' best practices',' template',' course',' training',
+  ' beginner',' advanced','step by step',' learn ',' understand',
+  ' statistics',' stats',' benchmark',
+  ' case study',' case studies',' hacks',' tricks',
+  ' framework',' comparison',' review ',' reviews',
+  'best linkedin','top linkedin','using linkedin for',
+  'benefits of','how linkedin','how to use linkedin',
 ];
 
-// These words = BLOG (someone wants to learn)
-const BLOG_WORDS = [
-  'how to','how do','how does','how can','what is','what are',
-  'why is','why does','why are','when to','where to',
-  'guide','tutorial','tips','checklist','examples','example',
-  'strategy','strategies','vs','versus','alternative','alternatives',
-  'tools','tool','software','app','explained','definition',
-  'best practices','template','templates','course','training',
-  'beginner','advanced','step by step','learn','understand'
+// These words mean SERVICE PAGE (commercial/transactional intent)
+const SERVICE_SIGNALS=[
+  ' agency',' agencies',' company',' companies',
+  ' services',' consultant',' consulting',
+  ' expert ',' experts ',' hire ',' outsource',
+  ' pricing',' price',' cost',' fee ',
+  ' package',' quote ',' near me',
+  ' provider',' providers',' firm ',
+  'white label','done for you',' freelancer',
+  'lead generation agency','lead generation company',
+  'lead generation services','lead generation service',
+  'seo agency','seo company','seo services',
+  'marketing agency','marketing company','marketing services',
 ];
 
-// These = junk, remove them
-const JUNK_PATTERNS = [
-  /\b(pdf|free download|crack|nulled|torrent|pirate|hacked)\b/i,
-  /\b(xxx|porn|adult|sex)\b/i,
-  /^[a-z]{1,2}$/i,   // single/double letter
-  /\d{5,}/,          // long number strings
-  /[^\x00-\x7F]{3,}/ // non-latin characters (other languages)
-];
-
-function classifyKeyword(kw) {
-  const k = kw.toLowerCase().trim();
-
-  // Remove junk
-  for (const p of JUNK_PATTERNS) if (p.test(k)) return 'junk';
-
-  // Too short
-  if (k.split(/\s+/).length < 2 && k.length < 6) return 'junk';
-
-  // Service page signals (check first — more specific)
-  if (SERVICE_WORDS.some(w => k.includes(w))) return 'service';
-
-  // Blog signals
-  if (BLOG_WORDS.some(w => k.includes(w))) return 'blog';
-
-  // No clear signal — if it's 2-3 words with no question/modifier, likely service or blog based on length
-  // Short (2-3 words): assume service (branded/commercial)
-  // Longer: assume blog (informational)
-  const wordCount = k.split(/\s+/).length;
-  if (wordCount <= 3) return 'service';
-  return 'blog';
+function classify(kw){
+  if(isJunk(kw)) return 'junk';
+  const k=' '+kw.toLowerCase().trim()+' ';
+  if(BLOG_SIGNALS.some(w=>k.includes(w))) return 'blog';
+  if(SERVICE_SIGNALS.some(w=>k.includes(w))) return 'service';
+  // No clear signal → short keywords = service, long = blog
+  return kw.trim().split(/\s+/).length<=3 ? 'service' : 'blog';
 }
 
-// ─────────────────────────────────────────────────────────────────
-// CLUSTERING — group similar keywords, pick primary
-// ─────────────────────────────────────────────────────────────────
-
-// Stopwords to ignore when finding common topic words
-const STOPS = new Set(['how','to','what','is','are','why','when','where','a','an','the',
-  'and','or','for','in','on','at','of','do','does','can','should','best','top',
-  'with','your','my','our','get','use','find','about','from','by','as','be',
-  'will','vs','its','not','no','i','you','they','up','out','just','than','now','all','any']);
-
-function getTokens(kw) {
-  return kw.toLowerCase()
-    .replace(/[^a-z0-9\s]/g,'')
-    .split(/\s+/)
-    .filter(w => w.length > 2 && !STOPS.has(w));
-}
-
-function clusterGroup(keywords) {
-  // Build ngram index — find keywords that share 2+ topic words
-  const assigned = new Set();
-  const clusters = [];
-
-  // Sort by volume desc so highest volume becomes primary
-  keywords.sort((a,b) => (b.vol||0) - (a.vol||0));
-
-  keywords.forEach((item, i) => {
-    if (assigned.has(i)) return;
-
-    const tokens = new Set(getTokens(item.kw));
-    const group = [item];
-    assigned.add(i);
-
-    // Find other keywords that share 2+ words with this one
-    keywords.forEach((other, j) => {
-      if (assigned.has(j)) return;
-      const otherTokens = getTokens(other.kw);
-      const shared = otherTokens.filter(t => tokens.has(t)).length;
-      if (shared >= 2) {
-        group.push(other);
-        assigned.add(j);
-      }
-    });
-
-    clusters.push(group);
-  });
-
-  return clusters;
-}
-
-// ─────────────────────────────────────────────────────────────────
-// TITLE GENERATOR — clean blog/service title from primary keyword
-// ─────────────────────────────────────────────────────────────────
-function makeTitle(kw, type) {
-  const k = kw.trim();
-  const kl = k.toLowerCase();
-  const yr = new Date().getFullYear();
-
-  // Title case helper
-  const tc = s => s.replace(/\b\w+/g, (w,pos) => {
-    const skip = new Set(['a','an','the','and','or','for','in','of','on','at','to','by','vs']);
-    return (pos===0 || !skip.has(w.toLowerCase())) ? w[0].toUpperCase()+w.slice(1) : w;
-  });
-
-  if (/^how to\b/i.test(kl)) {
-    const stripped = k.replace(/^how to\s+/i,'');
-    return `How to ${tc(stripped)}: Step-by-Step Guide (${yr})`;
-  }
-  if (/^what (is|are)\b/i.test(kl)) {
-    const stripped = k.replace(/^what (is|are)\s+/i,'');
-    return `What Is ${tc(stripped)}? Complete Guide (${yr})`;
-  }
-  if (/\bvs\.?\b|\bversus\b/i.test(kl)) return `${tc(k)}: Full Comparison [${yr}]`;
-  if (/\bbest\b/i.test(kl)) return `${tc(k)} in ${yr}: Expert Picks`;
-  if (/\bguide\b/i.test(kl)) return `The Complete ${tc(k.replace(/guide/i,'').trim())} Guide (${yr})`;
-  if (/\btips\b/i.test(kl)) return `${tc(k)}: ${yr} Expert Tips`;
-  if (/\bchecklist\b/i.test(kl)) return `${tc(k.replace(/checklist/i,'').trim())} Checklist (${yr})`;
-
-  // Service page titles
-  if (type === 'service') {
-    if (/pricing|cost|price/i.test(kl)) return `${tc(k.replace(/pricing|cost|price/i,'').trim())} Pricing: Complete Cost Breakdown`;
-    if (/agency|company|services/i.test(kl)) return `${tc(k)}: Expert Services & How to Choose`;
-    return `${tc(k)}: Professional Services`;
-  }
-
-  // Generic fallback
-  return `${tc(k)}: Complete Guide (${yr})`;
-}
-
-// ─────────────────────────────────────────────────────────────────
-// DEDUPLICATE — remove near-identical keywords
-// ─────────────────────────────────────────────────────────────────
-function dedupe(kwList) {
-  const seen = new Map();
-  kwList.forEach(item => {
-    const norm = item.kw.toLowerCase().trim()
-      .replace(/[^a-z0-9\s]/g,'')
-      .split(/\s+/).sort().join(' '); // sort words to catch "lead linkedin" = "linkedin lead"
-    if (!seen.has(norm) || (item.vol||0) > (seen.get(norm).vol||0)) {
-      seen.set(norm, item);
-    }
+// ── STEP 3: DEDUPLICATE ─────────────────────────────────────────
+function dedupe(list){
+  const seen=new Map();
+  list.forEach(item=>{
+    const norm=item.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/).sort().join(' ');
+    if(!seen.has(norm)||(item.vol||0)>(seen.get(norm).vol||0)) seen.set(norm,item);
   });
   return [...seen.values()];
 }
 
-// ─────────────────────────────────────────────────────────────────
-// MAIN RUN
-// ─────────────────────────────────────────────────────────────────
-function run() {
-  const kwIdx  = parseInt(document.getElementById('kwCol').value);
-  const volIdx = parseInt(document.getElementById('volCol').value);
+// ── STEP 4: CLUSTER ─────────────────────────────────────────────
+// Group keywords that share 2+ meaningful topic words
+// Primary = highest volume in the group
+// Max 10 secondaries shown — enough for an SEO person to work with
 
-  // Build keyword list
-  let kwList = rawRows.map(row => ({
-    kw:  (row[kwIdx]||'').trim(),
-    vol: volIdx >= 0 ? (parseInt(String(row[volIdx]).replace(/[^0-9]/g,''))||0) : 0
-  })).filter(item => item.kw.length > 0);
+const STOPS=new Set(['how','to','what','is','are','why','when','where','a','an','the',
+  'and','or','for','in','on','at','of','do','does','can','should','best','top',
+  'with','your','my','our','get','use','find','about','from','by','as','be',
+  'will','its','not','no','i','you','they','up','out','just','than','now',
+  'all','any','vs','using','used','via','that','this','these','those',
+  'more','most','very','also','too','so','but','into','make','need']);
 
-  // Step 1: dedupe
-  kwList = dedupe(kwList);
-
-  // Step 2: classify
-  const blogs    = kwList.filter(item => classifyKeyword(item.kw) === 'blog');
-  const services = kwList.filter(item => classifyKeyword(item.kw) === 'service');
-  const ignored  = kwList.filter(item => classifyKeyword(item.kw) === 'junk');
-
-  // Step 3: cluster each group
-  blogClusters    = clusterGroup(blogs);
-  serviceClusters = clusterGroup(services);
-
-  // Sort clusters by total volume desc
-  const clusterVol = c => c.reduce((s,k) => s+(k.vol||0), 0);
-  blogClusters.sort((a,b) => clusterVol(b) - clusterVol(a));
-  serviceClusters.sort((a,b) => clusterVol(b) - clusterVol(a));
-
-  // Render
-  renderSummary(blogs.length, services.length, ignored.length);
-  renderList('blogList', blogClusters, 'blog');
-  renderList('serviceList', serviceClusters, 'service');
-  document.getElementById('results').classList.add('show');
-  document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
+function tokens(kw){
+  return kw.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/)
+    .filter(w=>w.length>2&&!STOPS.has(w));
 }
 
-function renderSummary(b, s, ig) {
-  document.getElementById('summary').innerHTML = `
-    <div class="sum-pill sum-blog"><span class="sum-n">${b}</span>Blog Keywords → ${blogClusters.length} blog posts</div>
-    <div class="sum-pill sum-service"><span class="sum-n">${s}</span>Service Keywords → ${serviceClusters.length} service pages</div>
-    <div class="sum-pill sum-ignored"><span class="sum-n">${ig}</span>Removed (junk / irrelevant)</div>
-  `;
+function clusterGroup(list){
+  // Sort by volume desc so primary is always highest volume
+  list.sort((a,b)=>(b.vol||0)-(a.vol||0));
+  const assigned=new Set();
+  const clusters=[];
+  list.forEach((item,i)=>{
+    if(assigned.has(i)) return;
+    const toks=new Set(tokens(item.kw));
+    if(toks.size===0){assigned.add(i);return;} // skip if no meaningful tokens
+    const group=[item];
+    assigned.add(i);
+    list.forEach((other,j)=>{
+      if(assigned.has(j)) return;
+      const otherToks=tokens(other.kw);
+      const shared=otherToks.filter(t=>toks.has(t)).length;
+      if(shared>=2){group.push(other);assigned.add(j);}
+    });
+    clusters.push(group);
+  });
+  return clusters;
 }
 
-function renderList(elId, clusters, type) {
-  const el = document.getElementById(elId);
-  if (!clusters.length) {
-    el.innerHTML = `<div class="empty-state">No ${type === 'blog' ? 'blog' : 'service page'} keywords found in your sheet.</div>`;
-    return;
+// ── STEP 5: TITLE GENERATOR ─────────────────────────────────────
+// Makes a real, usable blog/service page title
+// NOT "keyword: Complete Guide" for everything
+function makeTitle(kw,type){
+  const k=kw.trim();
+  const kl=k.toLowerCase();
+  const yr=new Date().getFullYear();
+  const tc=s=>s.replace(/\b\w+/g,(w,p)=>{
+    const skip=new Set(['a','an','the','and','or','for','in','of','on','at','to','by','vs','with']);
+    return(p===0||!skip.has(w.toLowerCase()))?w[0].toUpperCase()+w.slice(1):w;
+  });
+
+  // HOW TO
+  if(/^how to\b/i.test(kl)){
+    const rest=k.replace(/^how to\s+/i,'');
+    return `How to ${tc(rest)} (${yr} Step-by-Step Guide)`;
+  }
+  // WHAT IS / WHAT ARE
+  if(/^what (is|are)\b/i.test(kl)){
+    const rest=k.replace(/^what (is|are)\s+/i,'');
+    return `What Is ${tc(rest)}? Definition, Examples & How It Works`;
+  }
+  // WHY
+  if(/^why\b/i.test(kl)){
+    const rest=k.replace(/^why\s+/i,'');
+    return `Why ${tc(rest)}: Key Reasons Explained`;
+  }
+  // VS / VERSUS
+  if(/\bvs\.?\b|\bversus\b/i.test(kl)) return `${tc(k)}: Full Comparison (${yr})`;
+  // BEST
+  if(/^best\b/i.test(kl)) return `${tc(k)} in ${yr}: Expert Picks`;
+  // TOP N
+  if(/^top\s+\d+/i.test(kl)) return `${tc(k)} (${yr} List)`;
+  // GUIDE
+  if(/\bguide\b/i.test(kl)) return `The Complete ${tc(k.replace(/\bguide\b/i,'').trim())} Guide (${yr})`;
+  // TIPS
+  if(/\btips\b/i.test(kl)) return `${tc(k.replace(/\btips\b/i,'').trim())} Tips That Actually Work`;
+  // CHECKLIST
+  if(/\bchecklist\b/i.test(kl)) return `${tc(k.replace(/\bchecklist\b/i,'').trim())} Checklist (${yr})`;
+  // EXAMPLES
+  if(/\bexamples\b/i.test(kl)) return `${tc(k)}: Real-World Examples & Templates`;
+  // STRATEGY / STRATEGIES
+  if(/\bstrateg/i.test(kl)) return `${tc(k)}: Proven Strategies That Work in ${yr}`;
+  // TOOLS / SOFTWARE
+  if(/\btools?\b|\bsoftware\b/i.test(kl)) return `Best ${tc(k)} in ${yr} — Ranked & Reviewed`;
+  // CASE STUDY
+  if(/\bcase stud/i.test(kl)) return `${tc(k)}: Results & Key Takeaways`;
+  // STATISTICS / STATS
+  if(/\bstatistics\b|\bstats\b/i.test(kl)) return `${tc(k)}: Key Data & Insights (${yr})`;
+
+  // SERVICE PAGE TITLES
+  if(type==='service'){
+    if(/\bpricing\b|\bcost\b|\bprice\b/i.test(kl))
+      return `${tc(k.replace(/\b(pricing|cost|price)\b/i,'').trim())} Pricing: What to Expect in ${yr}`;
+    if(/\bagenc/i.test(kl)) return `${tc(k)}: Top Agencies & How to Choose`;
+    if(/\bservices?\b/i.test(kl)) return `${tc(k)}: What's Included & How It Works`;
+    if(/\bconsult/i.test(kl)) return `${tc(k)}: Expert Help for Your Business`;
+    return `${tc(k)}: Professional Services`;
   }
 
-  const clusterVol = c => c.reduce((s,k) => s+(k.vol||0), 0);
-  const badgeClass = type === 'blog' ? 'pb-blog' : 'pb-service';
-  const badgeLabel = type === 'blog' ? 'Blog' : 'Service Page';
+  // Generic informational fallback
+  return `${tc(k)}: Complete Guide (${yr})`;
+}
 
-  el.innerHTML = clusters.map(group => {
-    const primary = group[0]; // highest volume = primary
-    const secondaries = group.slice(1);
-    const totalVol = clusterVol(group);
-    const title = makeTitle(primary.kw, type);
-    const slug = primary.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,'-').slice(0,55);
-    const urlBase = type === 'blog' ? 'yoursite.com/blog/' : 'yoursite.com/';
+// ── MAIN RUN ─────────────────────────────────────────────────────
+function run(){
+  const kwIdx=parseInt(document.getElementById('kwCol').value);
+  const volIdx=parseInt(document.getElementById('volCol').value);
 
-    const secTags = secondaries.length
-      ? secondaries.map(k => `<span class="sec-tag">${esc(k.kw)}</span>`).join('')
+  let kwList=rawRows.map(row=>({
+    kw:(row[kwIdx]||'').trim(),
+    vol:volIdx>=0?(parseInt(String(row[volIdx]).replace(/[^0-9]/g,''))||0):0
+  })).filter(item=>item.kw.length>3);
+
+  // Clean & classify every keyword
+  const clean=kwList.filter(item=>!isJunk(item.kw));
+  const blogs=dedupe(clean.filter(item=>classify(item.kw)==='blog'));
+  const services=dedupe(clean.filter(item=>classify(item.kw)==='service'));
+  const junkCount=kwList.length-clean.length;
+
+  // Cluster
+  blogClusters=clusterGroup(blogs);
+  serviceClusters=clusterGroup(services);
+
+  // Sort clusters: biggest volume first
+  const vol=c=>c.reduce((s,k)=>s+(k.vol||0),0);
+  blogClusters.sort((a,b)=>vol(b)-vol(a));
+  serviceClusters.sort((a,b)=>vol(b)-vol(a));
+
+  renderSummary(blogs.length,services.length,junkCount);
+  renderList('blogList',blogClusters,'blog');
+  renderList('serviceList',serviceClusters,'service');
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderSummary(b,s,ig){
+  document.getElementById('summary').innerHTML=`
+    <div class="sum-pill sum-blog"><span class="sum-n">${b.toLocaleString()}</span>Blog Keywords → ${blogClusters.length} blog posts</div>
+    <div class="sum-pill sum-service"><span class="sum-n">${s.toLocaleString()}</span>Service Keywords → ${serviceClusters.length} service pages</div>
+    <div class="sum-pill sum-ignored"><span class="sum-n">${ig.toLocaleString()}</span>Removed — URLs, typos & junk</div>`;
+}
+
+function renderList(elId,clusters,type){
+  const el=document.getElementById(elId);
+  if(!clusters.length){
+    el.innerHTML=`<div class="empty-state">No ${type==='blog'?'blog':'service page'} keywords found.</div>`;
+    return;
+  }
+  const vol=c=>c.reduce((s,k)=>s+(k.vol||0),0);
+  const bc=type==='blog'?'pb-blog':'pb-service';
+  const bl=type==='blog'?'Blog Post':'Service Page';
+
+  el.innerHTML=clusters.map(group=>{
+    const primary=group[0];
+    // Show max 10 secondaries in UI — don't overwhelm
+    const secs=group.slice(1,11);
+    const totalVol=vol(group);
+    const title=makeTitle(primary.kw,type);
+    const slug=primary.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,'-').slice(0,55);
+    const base=type==='blog'?'yoursite.com/blog/':'yoursite.com/';
+    const more=group.length>11?`<span class="sec-tag" style="color:var(--amber)">+${group.length-11} more</span>`:'';
+    const secHtml=secs.length
+      ? secs.map(k=>`<span class="sec-tag">${esc(k.kw)}</span>`).join('')+more
       : `<span class="sec-tag" style="opacity:0.4">No secondary keywords</span>`;
-
     return `
     <div class="cluster-row">
       <div>
         <div class="cluster-primary">
-          <span class="primary-badge ${badgeClass}">${badgeLabel}</span>
+          <span class="pbadge ${bc}">${bl}</span>
           ${esc(primary.kw)}
-          ${primary.vol ? `<span style="font-size:0.68rem;color:var(--muted)">· ${primary.vol.toLocaleString()} vol</span>` : ''}
+          ${primary.vol?`<span style="font-size:0.68rem;color:var(--muted)">· ${primary.vol.toLocaleString()} vol</span>`:''}
         </div>
         <div class="cluster-title">${esc(title)}</div>
-        <div class="cluster-url">${urlBase}${slug}</div>
-        <div class="cluster-secondary">${secTags}</div>
+        <div class="cluster-url">${base}${slug}</div>
+        <div class="cluster-secondary">${secHtml}</div>
       </div>
-      <div class="cluster-vol">
-        ${totalVol ? `<strong>${totalVol.toLocaleString()}</strong>total vol` : '—'}
-      </div>
+      <div class="cluster-vol">${totalVol?`<strong>${totalVol.toLocaleString()}</strong>total vol`:'—'}</div>
     </div>`;
   }).join('');
 }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// ─────────────────────────────────────────────────────────────────
-// DOWNLOADS
-// ─────────────────────────────────────────────────────────────────
-function buildCSV(clusters, type) {
-  let csv = '#,Page Type,Primary Keyword,Page Title,URL Slug,Total Volume,Secondary Keywords\n';
-  clusters.forEach((group, idx) => {
-    const primary = group[0];
-    const secondaries = group.slice(1).map(k => k.kw).join(' | ');
-    const title = makeTitle(primary.kw, type);
-    const slug = primary.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,'-').slice(0,55);
-    const urlBase = type === 'blog' ? 'yoursite.com/blog/' : 'yoursite.com/';
-    const totalVol = group.reduce((s,k) => s+(k.vol||0), 0);
-    const pageType = type === 'blog' ? 'Blog Post' : 'Service Page';
-    csv += `"${idx+1}","${pageType}","${primary.kw.replace(/"/g,'""')}","${title.replace(/"/g,'""')}","${urlBase}${slug}","${totalVol||'—'}","${secondaries.replace(/"/g,'""')}"\n`;
+// ── DOWNLOAD ─────────────────────────────────────────────────────
+function buildCSV(clusters,type){
+  let csv='#,Page Type,Primary Keyword,Page Title,URL Slug,Total Volume,Secondary Keywords\n';
+  const vol=c=>c.reduce((s,k)=>s+(k.vol||0),0);
+  clusters.forEach((group,idx)=>{
+    const primary=group[0];
+    // ALL secondaries go in CSV (not just 10) — SEO person needs full list
+    const secs=group.slice(1).map(k=>k.kw).join(' | ');
+    const title=makeTitle(primary.kw,type);
+    const slug=primary.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,'-').slice(0,55);
+    const base=type==='blog'?'yoursite.com/blog/':'yoursite.com/';
+    const totalVol=vol(group);
+    const pt=type==='blog'?'Blog Post':'Service Page';
+    csv+=`"${idx+1}","${pt}","${primary.kw.replace(/"/g,'""')}","${title.replace(/"/g,'""')}","${base}${slug}","${totalVol||'—'}","${secs.replace(/"/g,'""')}"\n`;
   });
   return csv;
 }
-
-function downloadBlogs() {
-  if (!blogClusters.length) { alert('No blog keywords found.'); return; }
-  dl(buildCSV(blogClusters,'blog'), 'BLOGS-FINAL.csv');
+function downloadBlogs(){
+  if(!blogClusters.length){alert('No blog clusters found.');return;}
+  dl(buildCSV(blogClusters,'blog'),'BLOGS-FINAL.csv');
 }
-
-function downloadService() {
-  if (!serviceClusters.length) { alert('No service page keywords found.'); return; }
-  dl(buildCSV(serviceClusters,'service'), 'SERVICE-PAGES-FINAL.csv');
+function downloadService(){
+  if(!serviceClusters.length){alert('No service page clusters found.');return;}
+  dl(buildCSV(serviceClusters,'service'),'SERVICE-PAGES-FINAL.csv');
 }
-
-function dl(csv, name) {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
-  a.download = name;
-  a.click();
+function dl(csv,name){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=name;a.click();
 }
 </script>
 </body>
