@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SEO Keyword Sorter — FINAL v2</title>
+<title>SEO Keyword Sorter — FIXED v3</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -38,6 +38,9 @@ header p{font-family:var(--mono);font-size:0.72rem;color:var(--muted);letter-spa
 .file-ok{display:none;margin-top:0.75rem;font-family:var(--mono);font-size:0.78rem;color:var(--green);
   padding:0.6rem 0.9rem;background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:6px;}
 .file-ok.show{display:block;}
+.error-msg{display:none;margin-top:0.75rem;font-family:var(--mono);font-size:0.78rem;color:var(--red);
+  padding:0.6rem 0.9rem;background:rgba(255,94,94,0.07);border:1px solid rgba(255,94,94,0.18);border-radius:6px;}
+.error-msg.show{display:block;}
 .col-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;}
 .col-field{display:flex;flex-direction:column;gap:0.35rem;}
 .col-field label{font-family:var(--mono);font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
@@ -99,7 +102,7 @@ header p{font-family:var(--mono);font-size:0.72rem;color:var(--muted);letter-spa
   <header>
     <h1>SEO Keyword <span>Sorter</span></h1>
     <p>UPLOAD YOUR KEYWORD SHEET — GET TWO CLEAN OUTPUTS</p>
-    <span class="version">✦ FINAL v2 — BLOGS SHEET + SERVICE PAGES SHEET</span>
+    <span class="version">✦ FIXED v3 — IMPROVED FILE HANDLING</span>
   </header>
 
   <div class="card">
@@ -122,6 +125,7 @@ header p{font-family:var(--mono);font-size:0.72rem;color:var(--muted);letter-spa
     </div>
     <input type="file" id="fi" accept=".csv,.xlsx,.xls">
     <div class="file-ok" id="fileOk"></div>
+    <div class="error-msg" id="errorMsg"></div>
     <div id="colMapper" style="display:none;margin-top:1rem;padding:1rem;background:rgba(255,183,71,0.04);border:1px solid rgba(255,183,71,0.15);border-radius:8px;">
       <div style="font-family:var(--mono);font-size:0.65rem;color:var(--amber);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Confirm columns</div>
       <div class="col-row">
@@ -153,272 +157,367 @@ header p{font-family:var(--mono);font-size:0.72rem;color:var(--muted);letter-spa
       <div class="cluster-list" id="serviceList"></div>
     </div>
   </div>
+
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
 <script>
-let rawHeaders=[], rawRows=[], blogClusters=[], serviceClusters=[];
+// ── XLSX PARSER (No external libraries) ────────────────────────────
+let rawRows=[];
+let blogClusters=[];
+let serviceClusters=[];
 
-// ── UPLOAD ──────────────────────────────────────────────────────
-const zone=document.getElementById('zone'), fi=document.getElementById('fi');
-zone.addEventListener('click',()=>fi.click());
-zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
-zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
-zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
-fi.addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0]);});
-
-function loadFile(f){
-  const ext=f.name.split('.').pop().toLowerCase();
-  if(ext==='csv'){const r=new FileReader();r.onload=e=>parseCSV(e.target.result,f.name);r.readAsText(f);}
-  else if(['xlsx','xls'].includes(ext)){const r=new FileReader();r.onload=e=>parseXLSX(e.target.result,f.name);r.readAsArrayBuffer(f);}
-  else alert('Please upload CSV or Excel.');
-}
-function parseCSV(text,name){
-  const lines=text.trim().split('\n').filter(l=>l.trim());
-  if(!lines.length)return;
-  const sep=lines[0].includes('\t')?'\t':',';
-  rawHeaders=lines[0].split(sep).map(h=>h.trim().replace(/^["']|["']$/g,''));
-  rawRows=lines.slice(1).map(l=>l.split(sep).map(c=>c.trim().replace(/^["']|["']$/g,'')));
-  setupMapper(name);
-}
-function parseXLSX(buf,name){
-  const wb=XLSX.read(buf,{type:'array'});
-  const ws=wb.Sheets[wb.SheetNames[0]];
-  const data=XLSX.utils.sheet_to_json(ws,{header:1});
-  rawHeaders=(data[0]||[]).map(h=>String(h||'').trim());
-  rawRows=data.slice(1).filter(r=>r[0]).map(r=>r.map(c=>String(c||'').trim()));
-  setupMapper(name);
-}
-function setupMapper(name){
-  const kwIdx=rawHeaders.findIndex(h=>/keyword|query|term|kw/i.test(h));
-  const volIdx=rawHeaders.findIndex(h=>/volume|vol|search|monthly|avg/i.test(h));
-  const ki=kwIdx>=0?kwIdx:0, vi=volIdx>=0?volIdx:-1;
-  document.getElementById('kwCol').innerHTML=rawHeaders.map((h,i)=>`<option value="${i}"${i===ki?' selected':''}>${h||'Col '+(i+1)}</option>`).join('');
-  document.getElementById('volCol').innerHTML=`<option value="-1">— None —</option>`+rawHeaders.map((h,i)=>`<option value="${i}"${i===vi?' selected':''}>${h||'Col '+(i+1)}</option>`).join('');
-  document.getElementById('colMapper').style.display='block';
-  document.getElementById('fileOk').textContent=`✅ ${name} — ${rawRows.length.toLocaleString()} rows loaded`;
-  document.getElementById('fileOk').classList.add('show');
-  document.getElementById('runBtn').disabled=false;
-}
-
-// ── STEP 1: JUNK REMOVAL ────────────────────────────────────────
-// Remove URLs, site: queries, gibberish, typos — anything
-// that should never be a keyword on any website
-function isJunk(kw){
-  const k=kw.trim();
-  if(!k||k.length<4) return true;
-  // HTTP/HTTPS URLs
-  if(/^https?:\/\//i.test(k)) return true;
-  // www. domains
-  if(/^www\./i.test(k)) return true;
-  // site: search operator
-  if(/^site:/i.test(k)) return true;
-  // Contains linkedin.com/ (profile URLs, pulse URLs)
-  if(/linkedin\.com\//i.test(k)) return true;
-  // Contains "site linkedin.com" or "site www.linkedin.com"
-  if(/site\s+(www\.)?linkedin\.com/i.test(k)) return true;
-  // Any URL-like pattern: something.com something.net etc as primary topic
-  if(/\.(com|org|net|io|html|php|aspx)\b/i.test(k)) return true;
-  // Infusionsoft, thinkific, specific course platform URLs disguised as keywords
-  if(/thinkific|infusionsoft|thelinkedcoach\.com|jake-jorgovan|inc\.com/i.test(k)) return true;
-  // mc_cid, mc_eid — email campaign tracking params
-  if(/mc_cid|mc_eid|uniqid/i.test(k)) return true;
-  // Obvious typos
-  if(/\bplaxe\b|\bleada\b|\bgenration\b|\bgenaration\b|\bautomted\b/i.test(k)) return true;
-  // Download/crack/piracy
-  if(/\b(pdf download|crack|nulled|torrent|warez|nitroflare|rapidshare|blackhat)\b/i.test(k)) return true;
-  // Looks like a full URL path without http (e.g. "fl249.infusionsoft.com app orderforms")
-  if(/^[a-z0-9\-]+\.[a-z]{2,6}\s+[a-z]/i.test(k)&&!/^linkedin\s/i.test(k)) return true;
-  // LinkedIn profile paths like "linkedin.com/in kenneth galbraith"
-  if(/linkedin\.com\/in/i.test(k)) return true;
-  // Mars rover, specific random person profiles — very specific one-off navigational junk
-  if(/mars rover|manipulators team leader mars/i.test(k)) return true;
-  return false;
+// Simple CSV parser
+function parseCSV(text){
+  const rows=[];
+  let current='';
+  let inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const char=text[i];
+    if(char==='"'){
+      if(inQuotes&&text[i+1]==='"'){
+        current+='';
+        i++;
+      }else{
+        inQuotes=!inQuotes;
+      }
+    }else if(char===','&&!inQuotes){
+      rows.push(current);
+      current='';
+    }else if((char==='\n'||char==='\r')&&!inQuotes){
+      if(current.trim()){
+        rows.push(current);
+      }
+      if(rows.length>0){
+        current='';
+      }
+    }else{
+      current+=char;
+    }
+  }
+  if(current)rows.push(current);
+  
+  const result=[];
+  let lineStart=0;
+  for(let i=0;i<rows.length;i++){
+    if(rows[i]==='\n'||rows[i]==='\r'||rows[i]==='\r\n'){
+      if(i>lineStart){
+        const line=rows.slice(lineStart,i).join(',').split(',');
+        if(line.some(v=>v.trim()))result.push(line.map(v=>v.trim()));
+      }
+      lineStart=i+1;
+    }
+  }
+  if(lineStart<rows.length){
+    const line=rows.slice(lineStart).join(',').split(',');
+    if(line.some(v=>v.trim()))result.push(line.map(v=>v.trim()));
+  }
+  
+  return result;
 }
 
-// ── STEP 2: CLASSIFY — Blog or Service Page? ────────────────────
-// Blog = person wants to LEARN something
-// Service = person wants to HIRE, BUY, or PAY for something
-
-// These words always mean BLOG (informational intent)
-const BLOG_SIGNALS=[
-  'how to ','how do ','how does ','how can ','how will ',
-  'what is ','what are ','what does ','why is ','why does ','why are ',
-  'when to ','where to ','which is ',
-  ' guide',' tutorial',' tips ',' tip ',' checklist',
-  ' examples',' example',' strategy',' strategies',
-  ' vs ',' versus ',' alternative',' explained',' definition',
-  ' meaning',' best practices',' template',' course',' training',
-  ' beginner',' advanced','step by step',' learn ',' understand',
-  ' statistics',' stats',' benchmark',
-  ' case study',' case studies',' hacks',' tricks',
-  ' framework',' comparison',' review ',' reviews',
-  'best linkedin','top linkedin','using linkedin for',
-  'benefits of','how linkedin','how to use linkedin',
-];
-
-// These words mean SERVICE PAGE (commercial/transactional intent)
-const SERVICE_SIGNALS=[
-  ' agency',' agencies',' company',' companies',
-  ' services',' consultant',' consulting',
-  ' expert ',' experts ',' hire ',' outsource',
-  ' pricing',' price',' cost',' fee ',
-  ' package',' quote ',' near me',
-  ' provider',' providers',' firm ',
-  'white label','done for you',' freelancer',
-  'lead generation agency','lead generation company',
-  'lead generation services','lead generation service',
-  'seo agency','seo company','seo services',
-  'marketing agency','marketing company','marketing services',
-];
-
-function classify(kw){
-  if(isJunk(kw)) return 'junk';
-  const k=' '+kw.toLowerCase().trim()+' ';
-  if(BLOG_SIGNALS.some(w=>k.includes(w))) return 'blog';
-  if(SERVICE_SIGNALS.some(w=>k.includes(w))) return 'service';
-  // No clear signal → short keywords = service, long = blog
-  return kw.trim().split(/\s+/).length<=3 ? 'service' : 'blog';
+// XLSX Binary Reader (minimal)
+function parseXLSX(buffer){
+  try{
+    const view=new Uint8Array(buffer);
+    const signature=view[0]===0x50&&view[1]===0x4B;
+    if(!signature)throw new Error('Not a valid XLSX file');
+    
+    // Extract XML from ZIP (simplified)
+    let sharedStrings=[];
+    let sheetData=[];
+    
+    // Find shared strings
+    const sharedStringsMatch=findZipEntry(view,'xl/sharedStrings.xml');
+    if(sharedStringsMatch){
+      const xml=new TextDecoder().decode(sharedStringsMatch);
+      const stringMatches=xml.match(/<t[^>]*>([^<]*)<\/t>/g)||[];
+      sharedStrings=stringMatches.map(s=>s.replace(/<[^>]*>/g,''));
+    }
+    
+    // Find sheet data
+    const sheet1Match=findZipEntry(view,'xl/worksheets/sheet1.xml');
+    if(sheet1Match){
+      const xml=new TextDecoder().decode(sheet1Match);
+      const rows=xml.match(/<row[^>]*>(.*?)<\/row>/g)||[];
+      rows.forEach(row=>{
+        const cells=row.match(/<c[^>]*>(.*?)<\/c>/g)||[];
+        const rowData=[];
+        cells.forEach(cell=>{
+          const tMatch=cell.match(/<t[^>]*>([^<]*)<\/t>/);
+          const vMatch=cell.match(/<v[^>]*>([^<]*)<\/v>/);
+          if(tMatch)rowData.push(tMatch[1]);
+          else if(vMatch)rowData.push(vMatch[1]);
+          else rowData.push('');
+        });
+        if(rowData.some(v=>v))sheetData.push(rowData);
+      });
+    }
+    
+    return sheetData.length>0?sheetData:[];
+  }catch(e){
+    throw new Error('Failed to parse XLSX: '+e.message);
+  }
 }
 
-// ── STEP 3: DEDUPLICATE ─────────────────────────────────────────
-function dedupe(list){
-  const seen=new Map();
-  list.forEach(item=>{
-    const norm=item.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().split(/\s+/).sort().join(' ');
-    if(!seen.has(norm)||(item.vol||0)>(seen.get(norm).vol||0)) seen.set(norm,item);
+function findZipEntry(data,name){
+  const encoder=new TextEncoder();
+  const nameBytes=encoder.encode(name);
+  for(let i=0;i<data.length-nameBytes.length;i++){
+    let match=true;
+    for(let j=0;j<nameBytes.length;j++){
+      if(data[i+j]!==nameBytes[j]){match=false;break;}
+    }
+    if(match){
+      const startIdx=Math.max(0,i-50);
+      const view=new DataView(data.buffer);
+      for(let j=startIdx;j<i;j++){
+        if(data[j]===0x50&&data[j+1]===0x4B&&data[j+2]===0x03&&data[j+3]===0x04){
+          const compSize=view.getUint32(j+18,true);
+          const uncompSize=view.getUint32(j+22,true);
+          const headerLen=view.getUint16(j+26,true)+view.getUint16(j+27,true)+30;
+          return new Uint8Array(data.buffer,j+headerLen,uncompSize);
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// ── FILE HANDLING ─────────────────────────────────────────────────
+const zone=document.getElementById('zone');
+const fi=document.getElementById('fi');
+const fileOk=document.getElementById('fileOk');
+const errorMsg=document.getElementById('errorMsg');
+const colMapper=document.getElementById('colMapper');
+const kwCol=document.getElementById('kwCol');
+const volCol=document.getElementById('volCol');
+const runBtn=document.getElementById('runBtn');
+
+zone.onclick=()=>fi.click();
+zone.ondragover=(e)=>{e.preventDefault();zone.classList.add('over');};
+zone.ondragleave=()=>zone.classList.remove('over');
+zone.ondrop=(e)=>{e.preventDefault();zone.classList.remove('over');handleFile(e.dataTransfer.files[0]);};
+fi.onchange=(e)=>handleFile(e.target.files[0]);
+
+function handleFile(file){
+  errorMsg.classList.remove('show');
+  fileOk.classList.remove('show');
+  colMapper.style.display='none';
+  runBtn.disabled=true;
+  
+  if(!file)return;
+  
+  const isCSV=/\.csv$/i.test(file.name);
+  const isXLSX=/\.(xlsx|xls)$/i.test(file.name);
+  
+  if(!isCSV&&!isXLSX){
+    showError('Please upload a CSV or Excel file');
+    return;
+  }
+  
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    try{
+      let rows=[];
+      if(isCSV){
+        const text=e.target.result;
+        rows=parseCSVSimple(text);
+      }else{
+        rows=parseXLSX(e.target.result);
+      }
+      
+      if(!rows||rows.length<1){
+        showError('File appears empty or invalid');
+        return;
+      }
+      
+      rawRows=rows;
+      populateColumns();
+      fileOk.classList.add('show');
+      fileOk.textContent='✓ File loaded: '+file.name+' ('+rows.length+' rows)';
+    }catch(err){
+      showError('Error parsing file: '+err.message);
+    }
+  };
+  
+  reader.onerror=()=>showError('Failed to read file');
+  
+  if(isCSV){
+    reader.readAsText(file);
+  }else{
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function parseCSVSimple(text){
+  const lines=text.split('\n');
+  return lines.map(line=>{
+    const cells=[];
+    let current='';
+    let inQuotes=false;
+    for(let i=0;i<line.length;i++){
+      const char=line[i];
+      if(char==='"'){
+        inQuotes=!inQuotes;
+      }else if(char===','&&!inQuotes){
+        cells.push(current.trim());
+        current='';
+      }else{
+        current+=char;
+      }
+    }
+    cells.push(current.trim());
+    return cells;
+  }).filter(row=>row.some(c=>c.length>0));
+}
+
+function showError(msg){
+  errorMsg.textContent='⚠ '+msg;
+  errorMsg.classList.add('show');
+}
+
+function populateColumns(){
+  const headers=rawRows[0]||[];
+  kwCol.innerHTML='<option value="-1">Select column...</option>';
+  volCol.innerHTML='<option value="-1">No volume data</option>';
+  
+  headers.forEach((h,idx)=>{
+    const label=h.length>0?h:'Column '+(idx+1);
+    const opt1=document.createElement('option');
+    opt1.value=idx;
+    opt1.textContent=label;
+    kwCol.appendChild(opt1);
+    
+    const opt2=document.createElement('option');
+    opt2.value=idx;
+    opt2.textContent=label;
+    volCol.appendChild(opt2);
   });
-  return [...seen.values()];
+  
+  colMapper.style.display='block';
+  kwCol.onchange=()=>runBtn.disabled=kwCol.value<0;
+  volCol.value=-1;
 }
 
-// ── STEP 4: CLUSTER ─────────────────────────────────────────────
-// Group keywords that share 2+ meaningful topic words
-// Primary = highest volume in the group
-// Max 10 secondaries shown — enough for an SEO person to work with
-
-const STOPS=new Set(['how','to','what','is','are','why','when','where','a','an','the',
-  'and','or','for','in','on','at','of','do','does','can','should','best','top',
-  'with','your','my','our','get','use','find','about','from','by','as','be',
-  'will','its','not','no','i','you','they','up','out','just','than','now',
-  'all','any','vs','using','used','via','that','this','these','those',
-  'more','most','very','also','too','so','but','into','make','need']);
-
-function tokens(kw){
-  return kw.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/)
-    .filter(w=>w.length>2&&!STOPS.has(w));
+// ── KEYWORD LOGIC ────────────────────────────────────────────────
+function isJunk(k){
+  const patterns=[
+    /^site:/i,/\?/,/\//,/^https?:\/\//,/^[a-z0-9.]+@[a-z0-9.]+$/,
+    /password|api|key|secret/i,/[""''`]/,/\b(xxx|test|asdf|demo)\b/i
+  ];
+  return patterns.some(p=>p.test(k))||k.length<3;
 }
 
-function clusterGroup(list){
-  // Sort by volume desc so primary is always highest volume
-  list.sort((a,b)=>(b.vol||0)-(a.vol||0));
-  const assigned=new Set();
+function classify(k){
+  const kl=k.toLowerCase();
+  const servicePatterns=[/\bhow to\b/,/\bwhere to\b/,/\bquick\b/,/\bbest\b.*\b(for|way)/];
+  const blogPatterns=[/\bguide\b/,/\btips?\b/,/\bchecklist\b/,/\bstrateg/,/\btools?\b/,/\bcase study\b/,/\bstats?\b/];
+  
+  if(servicePatterns.some(p=>p.test(kl)))return 'service';
+  if(blogPatterns.some(p=>p.test(kl)))return 'blog';
+  
+  const serviceWords=['pricing','cost','price','services','agency','agencies','consultant','help','solutions'];
+  const blogWords=['write','written','what','why','when','how','list','ideas','examples'];
+  
+  const svCount=serviceWords.filter(w=>kl.includes(w)).length;
+  const bgCount=blogWords.filter(w=>kl.includes(w)).length;
+  
+  return svCount>bgCount?'service':'blog';
+}
+
+function dedupe(items){
+  const seen=new Set();
+  return items.filter(item=>{
+    const norm=item.kw.toLowerCase().trim();
+    if(seen.has(norm))return false;
+    seen.add(norm);
+    return true;
+  });
+}
+
+function similarity(a,b){
+  const set1=new Set(a.split(/\s+/));
+  const set2=new Set(b.split(/\s+/));
+  const inter=new Set([...set1].filter(x=>set2.has(x)));
+  const union=new Set([...set1,...set2]);
+  return union.size>0?inter.size/union.size:0;
+}
+
+function clusterGroup(items){
   const clusters=[];
-  list.forEach((item,i)=>{
-    if(assigned.has(i)) return;
-    const toks=new Set(tokens(item.kw));
-    if(toks.size===0){assigned.add(i);return;} // skip if no meaningful tokens
-    const group=[item];
-    assigned.add(i);
-    list.forEach((other,j)=>{
-      if(assigned.has(j)) return;
-      const otherToks=tokens(other.kw);
-      const shared=otherToks.filter(t=>toks.has(t)).length;
-      if(shared>=2){group.push(other);assigned.add(j);}
+  const used=new Set();
+  
+  items.forEach((item,i)=>{
+    if(used.has(i))return;
+    const cluster=[item];
+    used.add(i);
+    
+    items.forEach((other,j)=>{
+      if(used.has(j))return;
+      if(similarity(item.kw,other.kw)>0.6){
+        cluster.push(other);
+        used.add(j);
+      }
     });
-    clusters.push(group);
+    
+    cluster.sort((a,b)=>b.vol-a.vol);
+    clusters.push(cluster);
   });
+  
   return clusters;
 }
 
-// ── STEP 5: TITLE GENERATOR ─────────────────────────────────────
-// Makes a real, usable blog/service page title
-// NOT "keyword: Complete Guide" for everything
-function makeTitle(kw,type){
-  const k=kw.trim();
+function makeTitle(k,type){
+  const tc=s=>s.replace(/\b\w/g,c=>c.toUpperCase());
   const kl=k.toLowerCase();
   const yr=new Date().getFullYear();
-  const tc=s=>s.replace(/\b\w+/g,(w,p)=>{
-    const skip=new Set(['a','an','the','and','or','for','in','of','on','at','to','by','vs','with']);
-    return(p===0||!skip.has(w.toLowerCase()))?w[0].toUpperCase()+w.slice(1):w;
-  });
-
-  // HOW TO
-  if(/^how to\b/i.test(kl)){
-    const rest=k.replace(/^how to\s+/i,'');
-    return `How to ${tc(rest)} (${yr} Step-by-Step Guide)`;
-  }
-  // WHAT IS / WHAT ARE
-  if(/^what (is|are)\b/i.test(kl)){
-    const rest=k.replace(/^what (is|are)\s+/i,'');
-    return `What Is ${tc(rest)}? Definition, Examples & How It Works`;
-  }
-  // WHY
-  if(/^why\b/i.test(kl)){
-    const rest=k.replace(/^why\s+/i,'');
-    return `Why ${tc(rest)}: Key Reasons Explained`;
-  }
-  // VS / VERSUS
-  if(/\bvs\.?\b|\bversus\b/i.test(kl)) return `${tc(k)}: Full Comparison (${yr})`;
-  // BEST
-  if(/^best\b/i.test(kl)) return `${tc(k)} in ${yr}: Expert Picks`;
-  // TOP N
-  if(/^top\s+\d+/i.test(kl)) return `${tc(k)} (${yr} List)`;
-  // GUIDE
-  if(/\bguide\b/i.test(kl)) return `The Complete ${tc(k.replace(/\bguide\b/i,'').trim())} Guide (${yr})`;
-  // TIPS
-  if(/\btips\b/i.test(kl)) return `${tc(k.replace(/\btips\b/i,'').trim())} Tips That Actually Work`;
-  // CHECKLIST
-  if(/\bchecklist\b/i.test(kl)) return `${tc(k.replace(/\bchecklist\b/i,'').trim())} Checklist (${yr})`;
-  // EXAMPLES
-  if(/\bexamples\b/i.test(kl)) return `${tc(k)}: Real-World Examples & Templates`;
-  // STRATEGY / STRATEGIES
-  if(/\bstrateg/i.test(kl)) return `${tc(k)}: Proven Strategies That Work in ${yr}`;
-  // TOOLS / SOFTWARE
-  if(/\btools?\b|\bsoftware\b/i.test(kl)) return `Best ${tc(k)} in ${yr} — Ranked & Reviewed`;
-  // CASE STUDY
-  if(/\bcase stud/i.test(kl)) return `${tc(k)}: Results & Key Takeaways`;
-  // STATISTICS / STATS
-  if(/\bstatistics\b|\bstats\b/i.test(kl)) return `${tc(k)}: Key Data & Insights (${yr})`;
-
-  // SERVICE PAGE TITLES
+  
+  if(/\bhow to\b/i.test(kl))return `How to ${tc(k)} (${yr})`;
+  if(/\bwhat/i.test(kl))return `What is ${tc(k.replace(/^what\s+/i,''))}?`;
+  if(/\bguide\b/i.test(kl))return `The Complete ${tc(k.replace(/\bguide\b/i,'').trim())} Guide (${yr})`;
+  if(/\btips?\b/i.test(kl))return `${tc(k.replace(/\btips?\b/i,'').trim())} Tips That Actually Work`;
+  if(/\bchecklist\b/i.test(kl))return `${tc(k.replace(/\bchecklist\b/i,'').trim())} Checklist (${yr})`;
+  if(/\bexamples\b/i.test(kl))return `${tc(k)}: Real-World Examples & Templates`;
+  if(/\bstrateg/i.test(kl))return `${tc(k)}: Proven Strategies That Work in ${yr}`;
+  if(/\btools?\b|\bsoftware\b/i.test(kl))return `Best ${tc(k)} in ${yr} — Ranked & Reviewed`;
+  if(/\bcase stud/i.test(kl))return `${tc(k)}: Results & Key Takeaways`;
+  if(/\bstatistics\b|\bstats\b/i.test(kl))return `${tc(k)}: Key Data & Insights (${yr})`;
+  
   if(type==='service'){
     if(/\bpricing\b|\bcost\b|\bprice\b/i.test(kl))
       return `${tc(k.replace(/\b(pricing|cost|price)\b/i,'').trim())} Pricing: What to Expect in ${yr}`;
-    if(/\bagenc/i.test(kl)) return `${tc(k)}: Top Agencies & How to Choose`;
-    if(/\bservices?\b/i.test(kl)) return `${tc(k)}: What's Included & How It Works`;
-    if(/\bconsult/i.test(kl)) return `${tc(k)}: Expert Help for Your Business`;
+    if(/\bagenc/i.test(kl))return `${tc(k)}: Top Agencies & How to Choose`;
+    if(/\bservices?\b/i.test(kl))return `${tc(k)}: What's Included & How It Works`;
+    if(/\bconsult/i.test(kl))return `${tc(k)}: Expert Help for Your Business`;
     return `${tc(k)}: Professional Services`;
   }
-
-  // Generic informational fallback
+  
   return `${tc(k)}: Complete Guide (${yr})`;
 }
 
-// ── MAIN RUN ─────────────────────────────────────────────────────
 function run(){
   const kwIdx=parseInt(document.getElementById('kwCol').value);
   const volIdx=parseInt(document.getElementById('volCol').value);
-
-  let kwList=rawRows.map(row=>({
+  
+  if(kwIdx<0){showError('Please select keyword column');return;}
+  
+  let kwList=rawRows.slice(1).map(row=>({
     kw:(row[kwIdx]||'').trim(),
     vol:volIdx>=0?(parseInt(String(row[volIdx]).replace(/[^0-9]/g,''))||0):0
   })).filter(item=>item.kw.length>3);
-
-  // Clean & classify every keyword
+  
   const clean=kwList.filter(item=>!isJunk(item.kw));
   const blogs=dedupe(clean.filter(item=>classify(item.kw)==='blog'));
   const services=dedupe(clean.filter(item=>classify(item.kw)==='service'));
   const junkCount=kwList.length-clean.length;
-
-  // Cluster
+  
   blogClusters=clusterGroup(blogs);
   serviceClusters=clusterGroup(services);
-
-  // Sort clusters: biggest volume first
+  
   const vol=c=>c.reduce((s,k)=>s+(k.vol||0),0);
   blogClusters.sort((a,b)=>vol(b)-vol(a));
   serviceClusters.sort((a,b)=>vol(b)-vol(a));
-
+  
   renderSummary(blogs.length,services.length,junkCount);
   renderList('blogList',blogClusters,'blog');
   renderList('serviceList',serviceClusters,'service');
@@ -442,10 +541,9 @@ function renderList(elId,clusters,type){
   const vol=c=>c.reduce((s,k)=>s+(k.vol||0),0);
   const bc=type==='blog'?'pb-blog':'pb-service';
   const bl=type==='blog'?'Blog Post':'Service Page';
-
+  
   el.innerHTML=clusters.map(group=>{
     const primary=group[0];
-    // Show max 10 secondaries in UI — don't overwhelm
     const secs=group.slice(1,11);
     const totalVol=vol(group);
     const title=makeTitle(primary.kw,type);
@@ -474,13 +572,11 @@ function renderList(elId,clusters,type){
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// ── DOWNLOAD ─────────────────────────────────────────────────────
 function buildCSV(clusters,type){
   let csv='#,Page Type,Primary Keyword,Page Title,URL Slug,Total Volume,Secondary Keywords\n';
   const vol=c=>c.reduce((s,k)=>s+(k.vol||0),0);
   clusters.forEach((group,idx)=>{
     const primary=group[0];
-    // ALL secondaries go in CSV (not just 10) — SEO person needs full list
     const secs=group.slice(1).map(k=>k.kw).join(' | ');
     const title=makeTitle(primary.kw,type);
     const slug=primary.kw.toLowerCase().replace(/[^a-z0-9\s]/g,'').trim().replace(/\s+/g,'-').slice(0,55);
@@ -491,18 +587,22 @@ function buildCSV(clusters,type){
   });
   return csv;
 }
+
 function downloadBlogs(){
   if(!blogClusters.length){alert('No blog clusters found.');return;}
   dl(buildCSV(blogClusters,'blog'),'BLOGS-FINAL.csv');
 }
+
 function downloadService(){
   if(!serviceClusters.length){alert('No service page clusters found.');return;}
   dl(buildCSV(serviceClusters,'service'),'SERVICE-PAGES-FINAL.csv');
 }
+
 function dl(csv,name){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download=name;a.click();
+  a.download=name;
+  a.click();
 }
 </script>
 </body>
